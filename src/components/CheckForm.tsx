@@ -164,13 +164,13 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
           onChange={(e) => setOpenedDate(e.target.value)}
           className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
-        <div className="flex flex-wrap gap-1.5">
+        <div className="grid grid-cols-4 gap-1.5">
           {openPresets.map((p) => (
             <button
               key={p.label}
               type="button"
               onClick={() => setOpenedDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
-              className={`pressable h-8 cursor-pointer rounded-lg px-2.5 text-xs font-medium ${
+              className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
                 openedDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
                   ? "bg-ink text-cta-on"
                   : "border border-border bg-surface text-muted"
@@ -194,13 +194,13 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
           onChange={(e) => setExpiryDate(e.target.value)}
           className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
-        <div className="flex flex-wrap gap-1.5">
+        <div className="grid grid-cols-4 gap-1.5">
           {expiryPresets.map((p) => (
             <button
               key={p.label}
               type="button"
               onClick={() => setExpiryDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
-              className={`pressable h-8 cursor-pointer rounded-lg px-2.5 text-xs font-medium ${
+              className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
                 expiryDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
                   ? "bg-ink text-cta-on"
                   : "border border-border bg-surface text-muted"

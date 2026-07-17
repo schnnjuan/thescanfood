@@ -95,13 +95,13 @@ export function LandingPage() {
             {categories.map((cat) => (
               <motion.div
                 key={cat.label}
-                className="rounded-xl border border-border bg-surface px-4 py-4"
+                className="rounded-xl border border-border bg-surface px-3 py-3"
                 whileHover={{ scale: scaleVal.pop, borderColor: "#4f46e5" }}
                 whileTap={{ scale: scaleVal.press }}
                 transition={springs.snappy}
               >
                 <p className="font-semibold text-ink">{cat.label}</p>
-                <p className="mt-1 text-xs text-muted">{cat.examples}</p>
+                <p className="mt-1 break-words text-xs text-muted">{cat.examples}</p>
               </motion.div>
             ))}
           </div>

@@ -119,13 +119,13 @@ export function NotFound({
               Adicionar &quot;{query}&quot;
             </p>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {CATEGORIES.map((c) => (
                 <button
                   key={c.value}
                   type="button"
                   onClick={() => setCat(c.value)}
-                  className={`pressable h-8 cursor-pointer rounded-lg px-3 text-xs font-medium ${
+                  className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
                     cat === c.value
                       ? "bg-ink text-cta-on"
                       : "border border-border bg-surface text-muted"

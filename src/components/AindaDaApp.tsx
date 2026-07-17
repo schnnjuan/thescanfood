@@ -27,7 +27,13 @@ export function AindaDaApp() {
   const [upsellDismissed, setUpsellDismissed] = useState(false);
   const [formKey, setFormKey] = useState(0);
   const [customRules, setCustomRules] = useState<ShelfRule[]>([]);
+  const [mounted, setMounted] = useState(false);
   const popular = useMemo(() => popularItems(), []);
+
+  // SSR guard: marca como montado pra animacoes so no client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // load custom rules from localStorage on mount
   useEffect(() => {
@@ -95,7 +101,7 @@ export function AindaDaApp() {
     screen.outcome.kind === "hit";
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-4 pb-8 pt-1">
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col overflow-x-hidden px-4 pb-8 pt-1">
       <AppHeader
         onHelp={() => setHelpOpen(true)}
         showBack={screen.name === "result"}
@@ -107,7 +113,7 @@ export function AindaDaApp() {
           <motion.main
             key="idle"
             className="flex flex-1 flex-col gap-6 pt-6"
-            initial={{ opacity: 0, y: distance.sm }}
+            initial={mounted ? { opacity: 0, y: distance.sm } : false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -distance.sm }}
             transition={springs.gentle}
@@ -143,7 +149,7 @@ export function AindaDaApp() {
           <motion.main
             key="result"
             className="flex flex-1 flex-col gap-4 pt-2"
-            initial={{ opacity: 0, y: distance.lg }}
+            initial={mounted ? { opacity: 0, y: distance.lg } : false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -distance.lg }}
             transition={springs.gentle}
