@@ -1,4 +1,8 @@
 import Link from "next/link";
+import seed from "@/data/seed.json";
+import { ItemCount } from "@/components/ItemCount";
+
+const STATIC_COUNT = seed.length;
 
 const categories = [
   {
@@ -53,7 +57,7 @@ export function LandingPage() {
           </Link>
 
           <p className="text-xs text-muted">
-            Gratis, sem cadastro. Milhares de itens na base.
+            Gratis, sem cadastro. <ItemCount staticCount={STATIC_COUNT} />.
           </p>
         </section>
 
@@ -99,7 +103,7 @@ export function LandingPage() {
             Para de duvidar. Descobre.
           </h2>
           <p className="text-sm text-white/70">
-            Milhares de itens na base. Gratis, sem cadastro, sem frescura.
+            <ItemCount staticCount={STATIC_COUNT} />. Gratis, sem cadastro, sem frescura.
           </p>
           <Link
             href="/app"
