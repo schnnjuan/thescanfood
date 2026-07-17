@@ -10,11 +10,11 @@ import { ShareCard } from "@/components/ShareCard";
 import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
-import type { CheckOutcome, DateMode } from "@/lib/types";
+import type { CheckOutcome } from "@/lib/types";
 
 type Screen =
   | { name: "idle"; prefill?: string }
-  | { name: "result"; outcome: CheckOutcome; date: string; mode: DateMode };
+  | { name: "result"; outcome: CheckOutcome; openedDate?: string; expiryDate?: string };
 
 export function AindaDaApp() {
   const [screen, setScreen] = useState<Screen>({ name: "idle" });
@@ -24,14 +24,14 @@ export function AindaDaApp() {
   const [formKey, setFormKey] = useState(0);
   const popular = useMemo(() => popularItems(), []);
 
-  function runCheck(payload: { query: string; date: string; mode: DateMode }) {
+  function runCheck(payload: { query: string; openedDate?: string; expiryDate?: string }) {
     const outcome = checkItem(payload);
     setCheckCount((c) => c + 1);
     setScreen({
       name: "result",
       outcome,
-      date: payload.date,
-      mode: payload.mode,
+      openedDate: payload.openedDate,
+      expiryDate: payload.expiryDate,
     });
   }
 
@@ -88,8 +88,8 @@ export function AindaDaApp() {
             <>
               <ResultCard
                 result={screen.outcome}
-                date={screen.date}
-                mode={screen.mode}
+                openedDate={screen.openedDate}
+                expiryDate={screen.expiryDate}
               />
               <ShareCard result={screen.outcome} />
               {showUpsell && (

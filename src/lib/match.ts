@@ -3,6 +3,7 @@ import type {
   CheckInput,
   CheckOutcome,
   CheckResult,
+  DateMode,
   ShelfRule,
   Status,
 } from "@/lib/types";
@@ -111,6 +112,11 @@ function labels(status: Status, daysRemaining: number): Pick<
   };
 }
 
+const severityOrder: Record<Status, number> = { ok: 0, warn: 1, bad: 2 };
+function worse(a: Status, b: Status): Status {
+  return severityOrder[a] >= severityOrder[b] ? a : b;
+}
+
 export function checkItem(input: CheckInput): CheckOutcome {
   const hits = searchItems(input.query, 1);
   if (hits.length === 0) {
@@ -124,24 +130,42 @@ export function checkItem(input: CheckInput): CheckOutcome {
 
   const rule = hits[0];
   const today = new Date();
-  const ref = parseLocalDate(input.date);
 
-  let daysRemaining: number;
-  let daysSince: number;
-  let windowDays: number;
+  // avalia cada data fornecida e pega a pior
+  let best: { status: Status; daysRemaining: number; daysSince: number; windowDays: number; decidingDate: string; decidingMode: DateMode } | null = null;
 
-  if (input.mode === "expiry") {
-    daysRemaining = daysBetween(today, ref);
-    daysSince = daysBetween(ref, today);
-    windowDays = Math.max(1, Math.abs(daysBetween(ref, today)) || 1);
-  } else {
-    const openDays = rule.afterOpenDays ?? 7;
-    daysSince = daysBetween(ref, today);
-    daysRemaining = openDays - daysSince;
-    windowDays = openDays;
+  function evalDate(dateIso: string, mode: DateMode) {
+    const ref = parseLocalDate(dateIso);
+    let daysR: number;
+    let daysS: number;
+    let win: number;
+    if (mode === "expiry") {
+      daysR = daysBetween(today, ref);
+      daysS = daysBetween(ref, today);
+      win = Math.max(1, Math.abs(daysR) || 1);
+    } else {
+      const openDays = rule.afterOpenDays ?? 7;
+      daysS = daysBetween(ref, today);
+      daysR = openDays - daysS;
+      win = openDays;
+    }
+    const st = statusFromDays(daysR, win);
+    if (!best || severityOrder[st] > severityOrder[best.status]) {
+      best = { status: st, daysRemaining: daysR, daysSince: daysS, windowDays: win, decidingDate: dateIso, decidingMode: mode };
+    }
   }
 
-  const status = statusFromDays(daysRemaining, windowDays);
+  if (input.openedDate) evalDate(input.openedDate, "opened");
+  if (input.expiryDate) evalDate(input.expiryDate, "expiry");
+
+  // se nenhuma data fornecida, assume aberto hoje
+  if (!best) {
+    const hoje = new Date();
+    const iso = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
+    evalDate(iso, "opened");
+  }
+
+  const { status, daysRemaining, decidingDate, decidingMode } = best!;
   const { statusLabel, daysLabel, tone } = labels(status, daysRemaining);
 
   return {
@@ -149,10 +173,12 @@ export function checkItem(input: CheckInput): CheckOutcome {
     rule,
     status,
     daysRemaining,
-    daysSince,
+    daysSince: best!.daysSince,
     statusLabel,
     daysLabel,
     tone,
+    decidingDate,
+    decidingMode,
   };
 }
 

@@ -19,8 +19,8 @@ export type ShelfRule = {
 
 export type CheckInput = {
   query: string;
-  date: string; // YYYY-MM-DD
-  mode: DateMode;
+  openedDate?: string; // YYYY-MM-DD, quando abriu
+  expiryDate?: string; // YYYY-MM-DD, validade
 };
 
 export type CheckResult = {
@@ -32,6 +32,8 @@ export type CheckResult = {
   statusLabel: string;
   daysLabel: string;
   tone: string;
+  decidingDate: string; // YYYY-MM-DD da data que determinou
+  decidingMode: DateMode; // qual data "venceu"
 };
 
 export type CheckNotFound = {

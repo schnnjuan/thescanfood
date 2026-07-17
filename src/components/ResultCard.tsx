@@ -19,8 +19,8 @@ const textColor: Record<string, string> = {
 
 type Props = {
   result: CheckResult;
-  date: string;
-  mode: "opened" | "expiry";
+  openedDate?: string;
+  expiryDate?: string;
 };
 
 function formatDateBr(iso: string): string {
@@ -28,12 +28,19 @@ function formatDateBr(iso: string): string {
   return `${d}/${m}/${y}`;
 }
 
-export function ResultCard({ result, date, mode }: Props) {
+export function ResultCard({ result, openedDate, expiryDate }: Props) {
   const phrase = useMemo(
     () => pickPhrase(result.status, result.rule.category),
     [result.status, result.rule.category],
   );
-  const modeLabel = mode === "opened" ? "aberto" : "validade";
+  const decidingLabel = result.decidingMode === "opened" ? "abertura" : "validade";
+
+  function dateLine(): string {
+    const parts: string[] = [result.rule.label];
+    if (openedDate) parts.push(`aberto ${formatDateBr(openedDate)}`);
+    if (expiryDate) parts.push(`validade ${formatDateBr(expiryDate)}`);
+    return parts.join(" · ");
+  }
 
   return (
     <div className="flex flex-col gap-5" aria-live="polite">
@@ -63,7 +70,10 @@ export function ResultCard({ result, date, mode }: Props) {
         </p>
 
         <p className="mt-3 text-sm text-muted">
-          {result.rule.label} &middot; {modeLabel} {formatDateBr(date)}
+          {dateLine()}
+        </p>
+        <p className="mt-0.5 text-xs text-muted/70">
+          Decisivo: {decidingLabel}
         </p>
 
         <div className="mt-5 w-full border-t border-border/50 pt-4">

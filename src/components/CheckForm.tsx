@@ -1,36 +1,19 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { searchItems } from "@/lib/match";
-import type { Category, DateMode, ShelfRule } from "@/lib/types";
+import type { Category, ShelfRule } from "@/lib/types";
 
 type Props = {
-  onSubmit: (payload: { query: string; date: string; mode: DateMode }) => void;
+  onSubmit: (payload: { query: string; openedDate?: string; expiryDate?: string }) => void;
   initialQuery?: string;
 };
 
-function todayIso(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+const DAY_MS = 86400000;
 
-function fmt(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+function iso(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
-
-const MODE_HINTS: Record<Category, string> = {
-  food: "Ambos servem. Validade se tiver na embalagem.",
-  cosmetic: "Geralmente data de abertura (6-12 meses).",
-  medicine: "Sempre validade impressa na caixa.",
-  cleaning: "Ambos servem. Validade se tiver no rotulo.",
-  other: "Use validade se tiver data, senao data de abertura.",
-};
 
 const CATEGORY_LABEL: Record<Category, string> = {
   food: "comida",
@@ -40,12 +23,35 @@ const CATEGORY_LABEL: Record<Category, string> = {
   other: "outro",
 };
 
+const modeHintsInfinite: Record<Category, string> = {
+  food: "",
+  cosmetic: "Dica: cosmetico geralmente usa data de abertura",
+  medicine: "Dica: remedio sempre usa validade",
+  cleaning: "",
+  other: "",
+};
+
+const openPresets = [
+  { label: "Hoje", offset: 0 },
+  { label: "Ontem", offset: -1 },
+  { label: "Semana", offset: -7 },
+  { label: "Mes", offset: -30 },
+];
+
+const expiryPresets = [
+  { label: "1 mes", offset: 30 },
+  { label: "3 meses", offset: 90 },
+  { label: "6 meses", offset: 180 },
+  { label: "1 ano", offset: 365 },
+];
+
 export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
   const itemId = useId();
-  const dateId = useId();
+  const openId = useId();
+  const expId = useId();
   const [query, setQuery] = useState(initialQuery);
-  const [date, setDate] = useState(todayIso());
-  const [mode, setMode] = useState<DateMode>("opened");
+  const [openedDate, setOpenedDate] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
   const [hits, setHits] = useState<ShelfRule[]>([]);
   const [openList, setOpenList] = useState(false);
   const [pickedCategory, setPickedCategory] = useState<Category | null>(null);
@@ -62,24 +68,6 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
     return () => clearTimeout(t);
   }, [query]);
 
-  const presets = useMemo(() => {
-    const today = new Date();
-    if (mode === "opened") {
-      return [
-        { label: "Hoje", date: fmt(today) },
-        { label: "Ontem", date: fmt(new Date(today.getTime() - 86400000)) },
-        { label: "Semana", date: fmt(new Date(today.getTime() - 7 * 86400000)) },
-        { label: "Mes", date: fmt(new Date(today.getTime() - 30 * 86400000)) },
-      ];
-    }
-    return [
-      { label: "1 mes", date: fmt(new Date(today.getTime() + 30 * 86400000)) },
-      { label: "3 meses", date: fmt(new Date(today.getTime() + 90 * 86400000)) },
-      { label: "6 meses", date: fmt(new Date(today.getTime() + 180 * 86400000)) },
-      { label: "1 ano", date: fmt(new Date(today.getTime() + 365 * 86400000)) },
-    ];
-  }, [mode]);
-
   function pick(rule: ShelfRule) {
     setQuery(rule.label);
     setPickedCategory(rule.category);
@@ -90,14 +78,23 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const q = query.trim();
-    if (!q || !date) return;
+    if (!q) return;
+    if (!openedDate && !expiryDate) return;
     setOpenList(false);
-    onSubmit({ query: q, date, mode });
+    onSubmit({
+      query: q,
+      openedDate: openedDate || undefined,
+      expiryDate: expiryDate || undefined,
+    });
   }
+
+  const now = new Date();
+  const canSubmit = query.trim() && (openedDate || expiryDate);
+  const hint = pickedCategory ? modeHintsInfinite[pickedCategory] : null;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      {/* item input */}
+      {/* item */}
       <div className="relative flex flex-col gap-1.5">
         <label htmlFor={itemId} className="text-sm font-medium text-ink">
           O que e?
@@ -112,14 +109,12 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
             setOpenList(true);
           }}
           onFocus={() => setOpenList(true)}
-          onBlur={() => {
-            setTimeout(() => setOpenList(false), 120);
-          }}
+          onBlur={() => setTimeout(() => setOpenList(false), 120)}
           placeholder="Ex: ketchup, rimel, dipirona..."
           className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
-        {pickedCategory && !openList && (
-          <p className="text-xs text-muted">{MODE_HINTS[pickedCategory]}</p>
+        {hint && !openList && (
+          <p className="text-xs text-muted">{hint}</p>
         )}
         {openList && hits.length > 0 && (
           <ul
@@ -147,68 +142,70 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
         )}
       </div>
 
-      {/* mode toggle + date */}
-      <fieldset className="flex flex-col gap-3">
-        <legend className="text-sm font-medium text-ink">Tipo de data</legend>
-        <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface p-1">
-          {(
-            [
-              ["opened", "Abertura"],
-              ["expiry", "Validade"],
-            ] as const
-          ).map(([value, label]) => {
-            const active = mode === value;
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setMode(value)}
-                className={`pressable h-10 cursor-pointer rounded-lg text-sm font-medium ${
-                  active
-                    ? "bg-ink text-cta-on"
-                    : "text-muted hover:text-ink"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
+      {/* data de abertura */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={openId} className="text-sm font-medium text-ink">
+          Data de abertura <span className="text-xs text-muted">(opcional)</span>
+        </label>
+        <input
+          id={openId}
+          type="date"
+          value={openedDate}
+          onChange={(e) => setOpenedDate(e.target.value)}
+          className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+        />
+        <div className="flex flex-wrap gap-1.5">
+          {openPresets.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => setOpenedDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
+              className={`pressable h-8 cursor-pointer rounded-lg px-2.5 text-xs font-medium ${
+                openedDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
+                  ? "bg-ink text-cta-on"
+                  : "border border-border bg-surface text-muted"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
+      </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={dateId} className="text-sm font-medium text-ink">
-            {mode === "opened" ? "Quando abriu?" : "Qual a validade?"}
-          </label>
-          <input
-            id={dateId}
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-          />
-          <div className="flex flex-wrap gap-1.5">
-            {presets.map((p) => (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => setDate(p.date)}
-                className={`pressable h-8 cursor-pointer rounded-lg px-2.5 text-xs font-medium ${
-                  date === p.date
-                    ? "bg-ink text-cta-on"
-                    : "border border-border bg-surface text-muted"
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
+      {/* validade */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={expId} className="text-sm font-medium text-ink">
+          Validade <span className="text-xs text-muted">(opcional)</span>
+        </label>
+        <input
+          id={expId}
+          type="date"
+          value={expiryDate}
+          onChange={(e) => setExpiryDate(e.target.value)}
+          className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+        />
+        <div className="flex flex-wrap gap-1.5">
+          {expiryPresets.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => setExpiryDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
+              className={`pressable h-8 cursor-pointer rounded-lg px-2.5 text-xs font-medium ${
+                expiryDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
+                  ? "bg-ink text-cta-on"
+                  : "border border-border bg-surface text-muted"
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
-      </fieldset>
+      </div>
 
       <button
         type="submit"
         className="pressable h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on hover:opacity-90 disabled:opacity-40"
-        disabled={!query.trim() || !date}
+        disabled={!canSubmit}
       >
         Checar se ainda da
       </button>
