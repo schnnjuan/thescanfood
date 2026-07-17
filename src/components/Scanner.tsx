@@ -84,20 +84,40 @@ export function Scanner({ onProduct, onBack }: Props) {
   // ── live scanning ──
 
   async function scanLoop() {
-    let decoder: any = null;
+    // try native BarcodeDetector first (best for video frames)
+    const hasNative = typeof window !== "undefined" && "BarcodeDetector" in window;
+    let useNative = false;
 
-    try {
-      const { Html5Qrcode } = await import("html5-qrcode");
-      decoder = new Html5Qrcode("scan-frame");
-    } catch {
-      // failed to load decoder — camera still shows but no detection
-      return;
+    if (hasNative) {
+      try {
+        const BD = (window as any).BarcodeDetector;
+        const test = new BD({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"] });
+        await test.detect(new ImageData(1, 1));
+        useNative = true;
+      } catch (_e) {
+        // BarcodeDetector exists but doesn't support formats
+      }
+    }
+
+    // fallback: load html5-qrcode decoder
+    let h5Decoder: any = null;
+    if (!useNative) {
+      try {
+        const { Html5Qrcode } = await import("html5-qrcode");
+        h5Decoder = new Html5Qrcode("scan-frame");
+      } catch (_e) {
+        // no decoder available — camera shows but user needs manual input
+        return;
+      }
     }
 
     const canvas = document.createElement("canvas");
-    canvas.width = 640;
-    canvas.height = 480;
     const ctx = canvas.getContext("2d")!;
+    const nativeDetector = useNative
+      ? new (window as any).BarcodeDetector({
+          formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "code_93", "qr_code"],
+        })
+      : null;
 
     let lastScan = 0;
 
@@ -110,21 +130,34 @@ export function Scanner({ onProduct, onBack }: Props) {
         return;
       }
 
+      // scan every 600ms
       const now = Date.now();
-      // scan at most once per second
-      if (now - lastScan < 1000) {
+      if (now - lastScan < 600) {
         requestAnimationFrame(tick);
         return;
       }
       lastScan = now;
 
-      try {
-        ctx.drawImage(video, 0, 0, 640, 480);
-        const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/jpeg", 0.8));
-        if (!blob) { requestAnimationFrame(tick); return; }
+      // capture frame at full video resolution
+      const w = video.videoWidth || 640;
+      const h = video.videoHeight || 480;
+      canvas.width = w;
+      canvas.height = h;
+      ctx.drawImage(video, 0, 0);
 
-        const file = new File([blob], "frame.jpg", { type: "image/jpeg" });
-        const code = await decoder.scanFile(file, false);
+      try {
+        let code: string | null = null;
+
+        if (nativeDetector) {
+          const barcodes = await nativeDetector.detect(canvas);
+          if (barcodes.length > 0) code = barcodes[0].rawValue;
+        } else if (h5Decoder) {
+          const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/jpeg", 0.9));
+          if (blob) {
+            const file = new File([blob], "frame.jpg", { type: "image/jpeg" });
+            try { code = await h5Decoder.scanFile(file, false); } catch {}
+          }
+        }
 
         if (code && code.length >= 3) {
           decodedRef.current = true;
@@ -135,7 +168,7 @@ export function Scanner({ onProduct, onBack }: Props) {
           return;
         }
       } catch (_e) {
-        // scanFile throws when no barcode found — normal
+        // no barcode in this frame — continue
       }
 
       requestAnimationFrame(tick);
@@ -180,7 +213,7 @@ export function Scanner({ onProduct, onBack }: Props) {
             </div>
 
             <p className="text-xs text-muted">
-              Precisa de HTTPS para usar a camera.
+              Aponte o codigo para a camera.
             </p>
 
             <button
