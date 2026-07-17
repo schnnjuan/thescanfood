@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { AppHeader } from "@/components/AppHeader";
 import { CheckForm } from "@/components/CheckForm";
@@ -125,6 +126,12 @@ export function AindaDaApp() {
               <p className="mt-2 text-sm text-muted">
                 Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda presta.
               </p>
+              <Link
+                href="/app/scan"
+                className="pressable mt-3 flex h-11 items-center justify-center gap-2 rounded-xl border border-dashed border-accent/30 bg-accent-soft text-sm font-medium text-accent-text hover:bg-accent hover:text-white"
+              >
+                📸 Escanear código de barras
+              </Link>
             </div>
 
             <CheckForm

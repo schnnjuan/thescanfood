@@ -40,3 +40,48 @@ export type CheckNotFound = {
 };
 
 export type CheckOutcome = CheckResult | CheckNotFound;
+
+// --- game / pantry ---
+
+export type Source = "scan" | "manual";
+
+export type PantryItem = {
+  id: string;
+  barcode?: string;
+  name: string;
+  category: Category;
+  afterOpenDays: number;
+  openedDate?: string;
+  expiryDate?: string;
+  source: Source;
+  addedAt: string;
+  imageUrl?: string;
+  brand?: string;
+};
+
+export type BadgeId =
+  | "first-scan"
+  | "catalogo-cheio"
+  | "dispensa-cheia"
+  | "colecionador-laticinios"
+  | "mestre-temperos"
+  | "streak-7"
+  | "streak-30"
+  | "sobrevivente";
+
+export type BadgeDefinition = {
+  id: BadgeId;
+  label: string;
+  description: string;
+  icon: string;
+};
+
+export type GameState = {
+  xp: number;
+  level: number;
+  streak: number;
+  lastActiveDate: string;
+  badges: BadgeId[];
+  totalScanned: number;
+  totalManualAdds: number;
+};
