@@ -132,6 +132,13 @@ export function AindaDaApp() {
                 Escanear codigo de barras
               </Link>
 
+              <Link
+                href="/app/pantry"
+                className="pressable flex h-11 items-center justify-center gap-2 border border-ink bg-ink text-sm font-bold text-white"
+              >
+                Minha dispensa
+              </Link>
+
               <CheckForm
                 key={formKey}
                 initialQuery={screen.prefill}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { AppRoot } from "@/components/AppRoot";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -46,7 +47,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-bg text-ink overflow-x-hidden">{children}</body>
+      <body className="min-h-full flex flex-col bg-bg text-ink overflow-x-hidden">
+        <AppRoot>{children}</AppRoot>
+      </body>
     </html>
   );
 }

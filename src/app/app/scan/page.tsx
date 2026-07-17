@@ -1,31 +1,46 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "motion/react";
 import { Scanner } from "@/components/Scanner";
 import { ScannerResult } from "@/components/ScannerResult";
-import { addItem } from "@/lib/pantry";
-import { recordScan } from "@/lib/game";
+import { RegistroOverlay } from "@/components/RegistroOverlay";
+import { AuthModal } from "@/components/AuthModal";
+import { useAuth } from "@/components/AuthProvider";
+import { getProduct, createProduct } from "@/lib/products";
+import { addToPantry } from "@/lib/pantry-db";
 import type { OFFProduct } from "@/lib/openfoodfacts";
 import type { Category } from "@/lib/types";
 
 type ScanScreen =
   | { name: "scanner" }
+  | { name: "registering"; product: OFFProduct; xp: number }
   | { name: "result"; product: OFFProduct }
   | { name: "done" };
 
 export default function ScanPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [screen, setScreen] = useState<ScanScreen>({ name: "scanner" });
-  const [badges, setBadges] = useState<string[]>([]);
+  const [showAuth, setShowAuth] = useState(false);
 
   const goBack = useCallback(() => router.push("/app"), [router]);
-  const goToScanner = useCallback(() => setScreen({ name: "scanner" }), []);
 
-  const handleProduct = useCallback((product: OFFProduct) => {
-    setScreen({ name: "result", product });
-  }, []);
+  const handleProduct = useCallback(
+    async (product: OFFProduct) => {
+      const existing = await getProduct(product.barcode);
+      if (existing) {
+        // Already in global registry → show result directly
+        setScreen({ name: "result", product });
+      } else {
+        // New product → auto-register with OFF data
+        await createProduct(product.barcode, product, user?.id);
+        setScreen({ name: "registering", product, xp: 25 });
+      }
+    },
+    [user],
+  );
 
   const handleConfirm = useCallback(
     (data: {
@@ -35,32 +50,49 @@ export default function ScanPage() {
       openedDate?: string;
       expiryDate?: string;
     }) => {
-      const current = screen;
-      if (current.name !== "result") return;
+      if (!user) {
+        setShowAuth(true);
+        return;
+      }
 
-      addItem({
-        barcode: current.product.barcode,
-        name: data.name,
-        category: data.category,
-        afterOpenDays: data.afterOpenDays,
+      const current = screen;
+      if (current.name !== "result" && current.name !== "done") return;
+
+      const product =
+        current.name === "result"
+          ? current.product
+          : null;
+      if (!product) return;
+
+      addToPantry({
+        barcode: product.barcode,
         openedDate: data.openedDate,
         expiryDate: data.expiryDate,
-        source: "scan",
-        imageUrl: current.product.imageUrl,
-        brand: current.product.brand,
+        afterOpenDays: data.afterOpenDays,
       });
-
-      const { newBadges } = recordScan("scan");
-      if (newBadges.length > 0) setBadges(newBadges);
       setScreen({ name: "done" });
     },
-    [screen],
+    [user, screen],
   );
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-md flex-col overflow-x-hidden">
+      <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+
       {screen.name === "scanner" && (
         <Scanner onProduct={handleProduct} onBack={goBack} />
+      )}
+
+      {screen.name === "registering" && (
+        <RegistroOverlay
+          productName={screen.product.name}
+          xp={screen.xp}
+          onDone={() => {
+            if (screen.name === "registering") {
+              setScreen({ name: "result", product: screen.product });
+            }
+          }}
+        />
       )}
 
       <AnimatePresence mode="wait">
@@ -69,30 +101,27 @@ export default function ScanPage() {
             <ScannerResult
               product={screen.product}
               onConfirm={handleConfirm}
-              onRetry={goToScanner}
-              onBack={goToScanner}
+              onRetry={() => setScreen({ name: "scanner" })}
+              onBack={() => setScreen({ name: "scanner" })}
             />
           </div>
         )}
 
         {screen.name === "done" && (
-          <div key="done" className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
+          <div
+            key="done"
+            className="flex flex-1 flex-col items-center justify-center gap-6 px-4"
+          >
             <div className="border border-ok bg-ok-soft px-8 py-6 text-center">
               <p className="text-4xl font-extrabold text-ok">Feito!</p>
-              <p className="mt-2 text-xs text-ok">Item adicionado a dispensa.</p>
+              <p className="mt-2 text-xs text-ok">
+                Item adicionado a dispensa.
+              </p>
             </div>
-            {badges.length > 0 && (
-              <div className="border border-border bg-white px-5 py-4 text-center">
-                <p className="text-[11px] font-bold text-ink">Novas conquistas</p>
-                {badges.map((b) => (
-                  <p key={b} className="mt-1 text-xs text-muted">{b}</p>
-                ))}
-              </div>
-            )}
             <div className="flex w-full flex-col gap-2">
               <button
                 type="button"
-                onClick={() => { setScreen({ name: "scanner" }); setBadges([]); }}
+                onClick={() => setScreen({ name: "scanner" })}
                 className="pressable h-11 w-full border border-ink bg-ink text-sm font-bold text-white"
               >
                 Escanear outro

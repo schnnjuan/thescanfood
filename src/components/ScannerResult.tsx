@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useAuth } from "@/components/AuthProvider";
 import { checkItem } from "@/lib/match";
 import type { OFFProduct } from "@/lib/openfoodfacts";
 import type { Category, CheckOutcome } from "@/lib/types";
@@ -53,6 +54,7 @@ const stripColor: Record<string, string> = {
 };
 
 export function ScannerResult({ product, onConfirm, onRetry, onBack }: Props) {
+  const { user } = useAuth();
   const [cat, setCat] = useState<Category>(product.category as Category || "food");
   const [days, setDays] = useState("7");
   const [openedDate, setOpenedDate] = useState("");
@@ -207,7 +209,7 @@ className={`pressable h-8 text-xs font-bold ${
           disabled={!openedDate && !expiryDate}
           className="pressable mt-1 h-11 border border-ink bg-ink text-sm font-bold text-white disabled:opacity-40"
         >
-          Adicionar a dispensa
+          {user ? "Adicionar a dispensa" : "Entrar para adicionar"}
         </button>
 
         <button
