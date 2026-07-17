@@ -1,27 +1,17 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { toPng } from "html-to-image";
-import { AlertTriangle, Check, X } from "lucide-react";
+import { Share2 } from "lucide-react";
+import { StatusSemaphore } from "@/components/StatusSemaphore";
+import { pickPhrase } from "@/lib/phrases";
 import type { CheckResult } from "@/lib/types";
 
-const statusConfig = {
-  ok: {
-    label: "AINDA DÁ",
-    fill: "#10B981",
-    Icon: Check,
-  },
-  warn: {
-    label: "ATENÇÃO",
-    fill: "#F59E0B",
-    Icon: AlertTriangle,
-  },
-  bad: {
-    label: "NÃO DÁ MAIS",
-    fill: "#F43F5E",
-    Icon: X,
-  },
-} as const;
+const statusLabel: Record<string, string> = {
+  ok: "AINDA DÁ",
+  warn: "ATENÇÃO",
+  bad: "NÃO DÁ MAIS",
+};
 
 type Props = {
   result: CheckResult;
@@ -29,25 +19,37 @@ type Props = {
 
 export function ShareCard({ result }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const cfg = statusConfig[result.status];
+  const label = statusLabel[result.status];
+  const phrase = useMemo(() => pickPhrase(result.status), [result.status]);
+  const num = result.daysRemaining < 0 ? Math.abs(result.daysRemaining) : result.daysRemaining;
+  const unit =
+    result.daysRemaining <= 0
+      ? Math.abs(result.daysRemaining) === 1
+        ? "dia"
+        : "dias"
+      : result.daysRemaining === 1
+        ? "dia"
+        : "dias";
 
-  const generate = useCallback(async () => {
+  const share = useCallback(async () => {
     if (!ref.current) return;
-    const blob = await toPng(ref.current, {
-      pixelRatio: 2,
-      cacheBust: true,
-    });
-    const res = await fetch(blob);
-    const buf = await res.arrayBuffer();
-    const file = new File([buf], "aindada.png", { type: "image/png" });
+    try {
+      const blob = await toPng(ref.current, { pixelRatio: 2, cacheBust: true });
+      const res = await fetch(blob);
+      const buf = await res.arrayBuffer();
+      const file = new File([buf], "aindada.png", { type: "image/png" });
 
-    if (typeof navigator !== "undefined" && navigator.share && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: "AindaDá" });
-    } else {
-      const a = document.createElement("a");
-      a.href = blob;
-      a.download = "aindada.png";
-      a.click();
+      if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "AindaDá" });
+      } else {
+        // fallback: download (rare on mobile, but covers desktop)
+        const a = document.createElement("a");
+        a.href = blob;
+        a.download = "aindada.png";
+        a.click();
+      }
+    } catch {
+      // user cancelled or share failed — silent
     }
   }, [result]);
 
@@ -63,46 +65,41 @@ export function ShareCard({ result }: Props) {
         padding: "32px 40px 24px",
         fontFamily: "system-ui, -apple-system, sans-serif",
         overflow: "hidden",
-        position: "relative",
       }}
     >
-      <div style={{ fontSize: 12, color: "#5B6472", fontWeight: 500 }}>
-        aindada.app
-      </div>
+      <div style={{ fontSize: 12, color: "#5B6472", fontWeight: 500 }}>aindada.app</div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, marginTop: -40 }}>
-        <div
-          style={{
-            width: 88,
-            height: 88,
-            borderRadius: "50%",
-            background: cfg.fill,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <cfg.Icon size={44} strokeWidth={2.5} color="white" />
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 12,
+          marginTop: -40,
+        }}
+      >
+        <StatusSemaphore status={result.status} size="lg" />
+
+        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", color: "#5B6472", marginTop: 4 }}>
+          {label}
         </div>
 
-        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", color: cfg.fill, marginTop: 4 }}>
-          {cfg.label}
-        </div>
-
-        <div style={{ fontSize: 160, fontWeight: 700, lineHeight: 1, color: "#131620", marginTop: 4, letterSpacing: "-0.04em" }}>
-          {result.daysRemaining < 0 ? Math.abs(result.daysRemaining) : result.daysRemaining}
+        <div style={{ fontSize: 160, fontWeight: 700, lineHeight: 1, color: "#131620", letterSpacing: "-0.04em" }}>
+          {num}
         </div>
 
         <div style={{ fontSize: 16, fontWeight: 500, color: "#5B6472", marginTop: -8 }}>
-          {Math.abs(result.daysRemaining) === 1 && result.daysRemaining >= 0 ? "dia" : "dias"}
+          {unit}
         </div>
 
-        <div style={{ fontSize: 15, color: "#5B6472", marginTop: 12 }}>
+        <div style={{ fontSize: 15, color: "#5B6472", marginTop: 8 }}>
           {result.rule.label}
         </div>
 
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#131620", marginTop: 16, textAlign: "center" }}>
-          {result.tone}
+        <div style={{ fontSize: 17, fontWeight: 700, color: "#131620", marginTop: 16, textAlign: "center", maxWidth: 400 }}>
+          {phrase}
         </div>
       </div>
 
@@ -117,10 +114,11 @@ export function ShareCard({ result }: Props) {
     <>
       <button
         type="button"
-        onClick={generate}
-        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-border bg-surface text-sm font-semibold text-ink transition-colors hover:border-accent hover:bg-accent-soft"
+        onClick={share}
+        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-cta text-sm font-semibold text-cta-on transition-opacity hover:opacity-90 active:opacity-80"
       >
-        Baixar card (Stories)
+        <Share2 className="h-4 w-4" strokeWidth={1.75} />
+        Compartilhar no Instagram
       </button>
       <div className="fixed -left-[9999px] top-0" aria-hidden>
         {el}
