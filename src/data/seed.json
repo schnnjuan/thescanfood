@@ -1,0 +1,160 @@
+[
+  {
+    "id": "ketchup",
+    "names": ["ketchup", "catchup", "catchup de tomate", "molho de tomate ketchup"],
+    "label": "Ketchup",
+    "category": "food",
+    "afterOpenDays": 180,
+    "fridgeRequired": true,
+    "tips": [
+      "Guarda na geladeira depois de aberto",
+      "Se cheiro ou cor estranha, descarta",
+      "Evita deixar na porta da geladeira (oscila temperatura)"
+    ],
+    "sources": ["USDA general guidance"]
+  },
+  {
+    "id": "maionese",
+    "names": ["maionese", "mayonnaise", "mayo"],
+    "label": "Maionese",
+    "category": "food",
+    "afterOpenDays": 60,
+    "fridgeRequired": true,
+    "tips": [
+      "Sempre na geladeira após abrir",
+      "Se separar ou cheirar azedo, joga fora",
+      "Não deixe horas fora da geladeira"
+    ]
+  },
+  {
+    "id": "leite",
+    "names": ["leite", "leite integral", "leite desnatado", "leite semidesnatado"],
+    "label": "Leite",
+    "category": "food",
+    "afterOpenDays": 5,
+    "fridgeRequired": true,
+    "tips": [
+      "Após abrir, 5–7 dias na geladeira",
+      "Cheiro azedo = descartar",
+      "Fecha bem a embalagem"
+    ]
+  },
+  {
+    "id": "iogurte",
+    "names": ["iogurte", "yogurt", "iogurte natural"],
+    "label": "Iogurte",
+    "category": "food",
+    "afterOpenDays": 7,
+    "fridgeRequired": true,
+    "tips": [
+      "Usa em até ~7 dias após abrir",
+      "Mofo ou cheiro off = fora",
+      "Não recoloque colher suja no pote"
+    ]
+  },
+  {
+    "id": "rimel",
+    "names": ["rímel", "rimel", "máscara de cílios", "mascara de cilios", "mascara de cílios"],
+    "label": "Rímel / máscara de cílios",
+    "category": "cosmetic",
+    "afterOpenDays": 90,
+    "fridgeRequired": false,
+    "tips": [
+      "Troca a cada 3 meses (risco de infecção ocular)",
+      "Não compartilhe com outras pessoas",
+      "Se ressecar ou cheirar mal, descarta"
+    ],
+    "sources": ["PAO comum 3M–6M em rótulos"]
+  },
+  {
+    "id": "protetor-solar",
+    "names": ["protetor solar", "protetor", "filtro solar", "sunscreen"],
+    "label": "Protetor solar",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "Após abrir, ~12 meses (veja PAO no rótulo)",
+      "Calor no carro reduz eficácia",
+      "Textura separada ou cheiro estranho = troca"
+    ]
+  },
+  {
+    "id": "base-liquida",
+    "names": ["base", "base líquida", "base liquida", "foundation"],
+    "label": "Base líquida",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "Em geral 6–12 meses após abrir",
+      "Cheiro ou textura estranha = descarta",
+      "Fecha bem para não oxidar"
+    ]
+  },
+  {
+    "id": "agua-sanitaria",
+    "names": ["água sanitária", "agua sanitaria", "cloro", "bleach"],
+    "label": "Água sanitária",
+    "category": "cleaning",
+    "afterOpenDays": 180,
+    "fridgeRequired": false,
+    "tips": [
+      "Perde cloro ativo com o tempo (~6–12 meses)",
+      "Guarda longe de sol e calor",
+      "Nunca misture com amônia ou vinagre"
+    ]
+  },
+  {
+    "id": "mostarda",
+    "names": ["mostarda", "mustard"],
+    "label": "Mostarda",
+    "category": "food",
+    "afterOpenDays": 60,
+    "fridgeRequired": true,
+    "tips": [
+      "Geladeira após abrir",
+      "Ácido ajuda a durar, mas cheiro off = fora"
+    ]
+  },
+  {
+    "id": "colirio",
+    "names": ["colírio", "colirio", "eye drops"],
+    "label": "Colírio",
+    "category": "medicine",
+    "afterOpenDays": 28,
+    "fridgeRequired": false,
+    "tips": [
+      "Muitos colírios: 28 dias após abrir — confira o rótulo",
+      "Não compartilhe o frasco",
+      "Em dúvida, farmacêutico ou médico"
+    ],
+    "disclaimer": "Não substitui orientação médica ou o rótulo do produto."
+  },
+  {
+    "id": "pao-de-forma",
+    "names": ["pão de forma", "pao de forma", "pão", "pao"],
+    "label": "Pão de forma",
+    "category": "food",
+    "afterOpenDays": 5,
+    "fridgeRequired": false,
+    "tips": [
+      "5–7 dias em local seco; congelar estende",
+      "Mofo em uma fatia = descarte o pacote",
+      "Geladeira resseca — melhor congelar"
+    ]
+  },
+  {
+    "id": "ovos",
+    "names": ["ovo", "ovos", "eggs"],
+    "label": "Ovos",
+    "category": "food",
+    "afterOpenDays": 28,
+    "fridgeRequired": true,
+    "tips": [
+      "Na geladeira, várias semanas se intactos",
+      "Não lave a casca antes de guardar",
+      "Teste na água: flutua = desconfie"
+    ]
+  }
+]
