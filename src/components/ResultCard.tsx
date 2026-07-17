@@ -5,6 +5,18 @@ import { StatusSemaphore } from "@/components/StatusSemaphore";
 import { pickPhrase } from "@/lib/phrases";
 import type { CheckResult } from "@/lib/types";
 
+const softBg: Record<string, string> = {
+  ok: "bg-ok-soft",
+  warn: "bg-warn-soft",
+  bad: "bg-bad-soft",
+};
+
+const textColor: Record<string, string> = {
+  ok: "text-ok",
+  warn: "text-warn",
+  bad: "text-bad",
+};
+
 type Props = {
   result: CheckResult;
   date: string;
@@ -25,22 +37,14 @@ export function ResultCard({ result, date, mode }: Props) {
 
   return (
     <div className="flex flex-col gap-5" aria-live="polite">
-      <div className="flex flex-col items-center rounded-2xl px-6 py-8 text-center">
-        <StatusSemaphore status={result.status} size="lg" />
+      <div className={`flex flex-col items-center rounded-2xl px-6 py-8 text-center ${softBg[result.status]}`}>
+        <StatusSemaphore status={result.status} size="md" />
 
-        <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-muted">
+        <p className={`mt-4 text-lg font-bold tracking-tight ${textColor[result.status]}`}>
           {result.statusLabel}
         </p>
 
-        <p
-          className={`mt-2 font-mono text-5xl font-semibold tabular-nums leading-none ${
-            result.status === "ok"
-              ? "text-ok"
-              : result.status === "warn"
-                ? "text-warn"
-                : "text-bad"
-          }`}
-        >
+        <p className="mt-2 font-mono text-6xl font-extrabold tabular-nums leading-none text-ink">
           {result.daysRemaining < 0
             ? Math.abs(result.daysRemaining)
             : result.daysRemaining}
@@ -49,8 +53,8 @@ export function ResultCard({ result, date, mode }: Props) {
         <p className="mt-1 text-sm font-medium text-muted">
           {result.daysRemaining < 0
             ? Math.abs(result.daysRemaining) === 1
-              ? "dia — venceu"
-              : "dias — venceu"
+              ? "dia vencido"
+              : "dias vencidos"
             : result.daysRemaining === 0
               ? "usa hoje"
               : result.daysRemaining === 1
@@ -59,10 +63,14 @@ export function ResultCard({ result, date, mode }: Props) {
         </p>
 
         <p className="mt-3 text-sm text-muted">
-          {result.rule.label} · {modeLabel} {formatDateBr(date)}
+          {result.rule.label} &middot; {modeLabel} {formatDateBr(date)}
         </p>
 
-        <p className="mt-4 text-base font-bold text-ink">{phrase}</p>
+        <div className="mt-5 w-full border-t border-border/50 pt-4">
+          <p className="text-sm font-bold leading-snug text-ink">
+            {phrase}
+          </p>
+        </div>
       </div>
 
       {result.rule.tips.length > 0 && (

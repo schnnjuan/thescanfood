@@ -2,40 +2,46 @@ import type { Status, Category } from "@/lib/types";
 
 const pools: Record<Status, string[]> = {
   ok: [
-    "Tá na luta.",
-    "Relaxa, ainda dá.",
+    "Ta na luta.",
+    "Relaxa, ainda da.",
     "De boa, pode usar.",
-    "Só sucesso.",
+    "So sucesso.",
     "Nem ferrou, ainda presta.",
     "Ta novo ainda, parceiro.",
     "Pode mandar ver.",
-    "Zero preocupação.",
-    "Tá sussa, pode usar.",
+    "Zero preocupacao.",
+    "Ta sussa, pode usar.",
     "Vai fundo, ta safe.",
+    "Ta tranquilao, fecha.",
+    "Ta suave, nem esquenta.",
   ],
   warn: [
-    "Corre que ainda dá tempo.",
+    "Corre que ainda da tempo.",
     "Usa logo, porra.",
-    "Não deixa passar, caralho.",
-    "É agora ou nunca, amigo.",
-    "Aproveita enquanto dá, porra.",
-    "Já ta na hora, acorda.",
-    "Se não usar agora, vai pro lixo.",
+    "Nao deixa passar, caralho.",
+    "E agora ou nunca, amigo.",
+    "Aproveita enquanto da, porra.",
+    "Ja ta na hora, acorda.",
+    "Se nao usar agora, vai pro lixo.",
     "Para de enrolando e usa.",
-    "Vai perder, coração.",
-    "Último aviso, parceiro.",
+    "Vai perder, coracao.",
+    "Ultimo aviso, parceiro.",
+    "Ta na corda bamba, usa logo.",
+    "Ja ta esticando, nao da mole.",
   ],
   bad: [
     "Descarta essa merda.",
-    "Já era, amigo.",
+    "Ja era, amigo.",
     "Passou da hora, caralho.",
-    "Tá podre, joga fora.",
-    "Não arrisca, descarta.",
-    "Tá no lixo, irmão.",
+    "Ta podre, joga fora.",
+    "Nao arrisca, descarta.",
+    "Ta no lixo, irmao.",
     "Perdeu, playboy.",
-    "Já foi pro saco.",
+    "Ja foi pro saco.",
     "Ta morto, enterra.",
     "Deu ruim, descarta.",
+    "Ta vencido, nao adianta insistir.",
+    "Agir como se ainda prestasse e escolha sua.",
   ],
 };
 
@@ -45,15 +51,15 @@ const categorySpecific: Record<Status, Partial<Record<Category, string[]>>> = {
   bad: {
     food: [
       "Barriga vai agradecer se descartar.",
-      "Intoxicação alimentar não é meme.",
+      "Intoxicacao alimentar nao e meme.",
     ],
     cosmetic: [
-      "Passar isso no rosto agora é crime.",
-      "Tá vencido, não adianta passar.",
+      "Passar isso no rosto agora e crime.",
+      "Ta vencido, nao adianta passar.",
     ],
     medicine: [
-      "Remédio vencido não faz efeito, descarta.",
-      "Não brinca com remédio vencido.",
+      "Remedio vencido nao faz efeito, descarta.",
+      "Nao brinca com remedio vencido.",
     ],
   },
 };
@@ -67,27 +73,6 @@ export function pickPhrase(status: Status, category?: Category): string {
   const mainPool = pools[status];
   const combined = [...catPool, ...mainPool];
 
-  // Deterministic-ish rotation so user sees diff phrases each check
   counter = (counter + 1) % combined.length;
   return combined[counter] ?? mainPool[0] ?? "";
-}
-
-export function pickSharePhrase(status: Status): string {
-  const share = {
-    ok: [
-      "Ainda dá, relaxa 👌",
-      "Ta safe ainda 👊",
-      "Pode usar sem medo ✅",
-    ],
-    warn: [
-      "Usa logo senão perde ⚠️",
-      "Corre que ainda dá ⏰",
-    ],
-    bad: [
-      "Descarta isso antes que exploda 💀",
-      "Já era, pro lixo 🗑️",
-    ],
-  };
-  const p = share[status];
-  return p[counter % p.length];
 }

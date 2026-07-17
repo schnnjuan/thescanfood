@@ -5,7 +5,7 @@ import type { Status } from "@/lib/types";
 
 type Props = {
   status: Status;
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
 };
 
 const config: Record<Status, { icon: typeof Check; fill: string; dim: string }> = {
@@ -15,19 +15,20 @@ const config: Record<Status, { icon: typeof Check; fill: string; dim: string }> 
 };
 
 const sizes = {
-  md: { light: 40, icon: 18, gap: 6, container: 60 },
-  lg: { light: 56, icon: 26, gap: 8, container: 84 },
+  sm: { light: 28, icon: 12, gap: 4, container: 40 },
+  md: { light: 36, icon: 16, gap: 5, container: 52 },
+  lg: { light: 48, icon: 22, gap: 6, container: 68 },
 };
 
-export function StatusSemaphore({ status, size = "lg" }: Props) {
+export function StatusSemaphore({ status, size = "md" }: Props) {
   const s = sizes[size];
   const lights: Status[] = ["bad", "warn", "ok"];
 
   return (
     <div
-      className="flex flex-col items-center"
-      style={{ gap: s.gap, width: s.container }}
-      aria-label={`Semáforo: ${status}`}
+      className="flex flex-col items-center rounded-xl bg-surface/50 px-3 py-2"
+      style={{ gap: s.gap }}
+      aria-label={`Status: ${status}`}
     >
       {lights.map((light) => {
         const c = config[light];
@@ -36,14 +37,14 @@ export function StatusSemaphore({ status, size = "lg" }: Props) {
         return (
           <div
             key={light}
-            className="flex items-center justify-center rounded-full transition-all duration-300 motion-safe:animate-[pop_200ms_ease-out]"
+            className="flex items-center justify-center rounded-full transition-all duration-300"
             style={{
               width: s.light,
               height: s.light,
               background: active ? c.fill : c.dim,
-              opacity: active ? 1 : 0.35,
+              opacity: active ? 1 : 0.3,
               boxShadow: active
-                ? `0 0 12px ${c.fill}40, 0 0 24px ${c.fill}20`
+                ? `0 0 8px ${c.fill}30, 0 0 16px ${c.fill}15`
                 : "none",
             }}
           >

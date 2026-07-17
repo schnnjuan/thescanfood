@@ -41,13 +41,8 @@ export function ShareCard({ result }: Props) {
 
       if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: "AindaDá" });
-      } else {
-        // fallback: download (rare on mobile, but covers desktop)
-        const a = document.createElement("a");
-        a.href = blob;
-        a.download = "aindada.png";
-        a.click();
       }
+      // no fallback — mobile share é o unico caminho
     } catch {
       // user cancelled or share failed — silent
     }
@@ -120,7 +115,7 @@ export function ShareCard({ result }: Props) {
         <Share2 className="h-4 w-4" strokeWidth={1.75} />
         Compartilhar no Instagram
       </button>
-      <div className="fixed -left-[9999px] top-0" aria-hidden>
+      <div className="sr-only" aria-hidden>
         {el}
       </div>
     </>

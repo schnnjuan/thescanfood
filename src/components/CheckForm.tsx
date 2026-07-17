@@ -25,7 +25,6 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
   const [mode, setMode] = useState<DateMode>("opened");
   const [hits, setHits] = useState<ShelfRule[]>([]);
   const [openList, setOpenList] = useState(false);
-  const [loading, setLoading] = useState(false);
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -48,14 +47,9 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const q = query.trim();
-    if (!q || !date || loading) return;
+    if (!q || !date) return;
     setOpenList(false);
-    setLoading(true);
-    // Use microtask so the UI paints the loading state before sync work
-    queueMicrotask(() => {
-      onSubmit({ query: q, date, mode });
-      setLoading(false);
-    });
+    onSubmit({ query: q, date, mode });
   }
 
   return (
@@ -164,17 +158,9 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
       <button
         type="submit"
         className="h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
-        disabled={!query.trim() || !date || loading}
+        disabled={!query.trim() || !date}
       >
-        {loading ? (
-          <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-current motion-safe:animate-[pulse_800ms_ease-in-out_infinite]" />
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-current motion-safe:animate-[pulse_800ms_ease-in-out_200ms_infinite]" />
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-current motion-safe:animate-[pulse_800ms_ease-in-out_400ms_infinite]" />
-          </span>
-        ) : (
-          "Checar se ainda dá"
-        )}
+        Checar se ainda dá
       </button>
     </form>
   );

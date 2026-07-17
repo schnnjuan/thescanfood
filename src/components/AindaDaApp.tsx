@@ -47,7 +47,7 @@ export function AindaDaApp() {
     screen.outcome.kind === "hit";
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-4 pb-10 pt-2">
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col px-4 pb-8 pt-1">
       <AppHeader
         onHelp={() => setHelpOpen(true)}
         showBack={screen.name === "result"}
@@ -55,13 +55,13 @@ export function AindaDaApp() {
       />
 
       {screen.name === "idle" && (
-        <main className="flex flex-1 flex-col gap-8 pt-4 motion-safe:animate-fadeIn">
+        <main className="flex flex-1 flex-col gap-6 pt-6 motion-safe:animate-fadeIn">
           <div>
-            <h1 className="text-balance text-3xl font-semibold tracking-tight text-ink">
+            <h1 className="text-balance text-3xl font-bold tracking-tight text-ink">
               Ainda dá pra usar?
             </h1>
-            <p className="mt-2 text-base text-muted">
-              Item + data. Resposta na hora.
+            <p className="mt-2 text-sm text-muted">
+              Digita o item e a data. A gente te fala a verdade.
             </p>
           </div>
 
@@ -76,23 +76,14 @@ export function AindaDaApp() {
             onPick={(label) => reset(label)}
           />
 
-          <section className="border-t border-border pt-6">
-            <h2 className="text-sm font-semibold text-ink">Como funciona</h2>
-            <ol className="mt-2 space-y-1.5 text-sm text-muted">
-              <li>1. Digita o item</li>
-              <li>2. Coloca a data de abertura ou validade</li>
-              <li>3. Vê o semáforo e as dicas</li>
-            </ol>
-          </section>
-
           <p className="text-center text-xs text-muted">
-            Referência geral — rótulo e bom senso mandam.
+            Referência geral &mdash; rótulo e bom senso mandam
           </p>
         </main>
       )}
 
       {screen.name === "result" && (
-        <main className="flex flex-1 flex-col gap-5 pt-2 motion-safe:animate-fadeIn">
+        <main className="flex flex-1 flex-col gap-4 pt-2 motion-safe:animate-fadeIn">
           {screen.outcome.kind === "hit" ? (
             <>
               <ResultCard
@@ -101,16 +92,16 @@ export function AindaDaApp() {
                 mode={screen.mode}
               />
               <ShareCard result={screen.outcome} />
-              <button
-                type="button"
-                onClick={() => reset()}
-                className="h-11 cursor-pointer text-sm font-medium text-muted hover:text-ink"
-              >
-                Checar outro item
-              </button>
               {showUpsell && (
                 <SoftUpsell onDismiss={() => setUpsellDismissed(true)} />
               )}
+              <button
+                type="button"
+                onClick={() => reset()}
+                className="h-11 w-full cursor-pointer text-sm font-medium text-muted transition-colors hover:text-ink"
+              >
+                Checar outro item
+              </button>
             </>
           ) : (
             <NotFound
