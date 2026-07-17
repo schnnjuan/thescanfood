@@ -10,7 +10,9 @@ import { ShareCard } from "@/components/ShareCard";
 import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
-import type { CheckOutcome } from "@/lib/types";
+import { NativeAd } from "@/components/NativeAd";
+import { nextAd } from "@/lib/ads";
+import type { CheckOutcome, Category } from "@/lib/types";
 
 type Screen =
   | { name: "idle"; prefill?: string }
@@ -91,6 +93,9 @@ export function AindaDaApp() {
                 openedDate={screen.openedDate}
                 expiryDate={screen.expiryDate}
               />
+              <div className="motion-safe:animate-fadeInUp delay-1">
+                <NativeAd ad={nextAd(screen.outcome.rule.category)} />
+              </div>
               <ShareCard result={screen.outcome} />
               {showUpsell && (
                 <div className="motion-safe:animate-fadeInUp delay-2">

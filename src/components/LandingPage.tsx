@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { NativeAd } from "@/components/NativeAd";
+import { nextAd } from "@/lib/ads";
 
 const categories = [
   {
@@ -78,6 +80,9 @@ export function LandingPage() {
             ))}
           </div>
         </section>
+
+        {/* ad slot */}
+        <NativeAd ad={nextAd()} />
 
         {/* categorias */}
         <section className="flex flex-col gap-5">
