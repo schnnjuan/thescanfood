@@ -17,7 +17,7 @@ export function HelpSheet({ open, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-2xl bg-surface p-5 shadow-lg motion-safe:animate-slideUp"
+        className="w-full max-w-md rounded-2xl bg-surface p-5 shadow-lg motion-safe:animate-pop"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="help-title" className="text-lg font-semibold text-ink">

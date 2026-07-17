@@ -15,23 +15,23 @@ export function AppHeader({ onHelp, showBack, onBack }: Props) {
         <button
           type="button"
           onClick={onBack}
-          className="cursor-pointer text-sm font-medium text-ink hover:text-accent-text"
+          className="pressable cursor-pointer text-sm font-medium text-ink hover:text-accent-text"
         >
           ← Nova busca
         </button>
       ) : (
         <span className="text-base font-semibold tracking-tight text-ink">
-          AindaDá
+          AindaDa
         </span>
       )}
       {showBack ? (
-        <span className="text-sm font-semibold text-ink">AindaDá</span>
+        <span className="text-sm font-semibold text-ink">AindaDa</span>
       ) : (
         <button
           type="button"
           onClick={onHelp}
           aria-label="Ajuda e disclaimer"
-          className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-muted hover:bg-surface hover:text-ink"
+          className="pressable flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-muted hover:bg-surface hover:text-ink"
         >
           <CircleHelp className="h-5 w-5" strokeWidth={1.75} />
         </button>

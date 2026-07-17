@@ -58,10 +58,10 @@ export function AindaDaApp() {
         <main className="flex flex-1 flex-col gap-6 pt-6 motion-safe:animate-fadeIn">
           <div>
             <h1 className="text-balance text-3xl font-bold tracking-tight text-ink">
-              Ainda dá pra usar?
+              Ainda da pra usar?
             </h1>
             <p className="mt-2 text-sm text-muted">
-              Digita o item e a data. A gente te fala a verdade.
+              Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda presta.
             </p>
           </div>
 
@@ -77,7 +77,7 @@ export function AindaDaApp() {
           />
 
           <p className="text-center text-xs text-muted">
-            Referência geral &mdash; rótulo e bom senso mandam
+            AindaDa — quando nao tem certeza, cheira. Referencia geral, rotulo e bom senso mandam.
           </p>
         </main>
       )}
@@ -93,12 +93,14 @@ export function AindaDaApp() {
               />
               <ShareCard result={screen.outcome} />
               {showUpsell && (
-                <SoftUpsell onDismiss={() => setUpsellDismissed(true)} />
+                <div className="motion-safe:animate-fadeInUp delay-2">
+                  <SoftUpsell onDismiss={() => setUpsellDismissed(true)} />
+                </div>
               )}
               <button
                 type="button"
                 onClick={() => reset()}
-                className="h-11 w-full cursor-pointer text-sm font-medium text-muted transition-colors hover:text-ink"
+                className="pressable motion-safe:animate-fadeInUp delay-3 h-11 w-full cursor-pointer text-sm font-medium text-muted hover:text-ink"
               >
                 Checar outro item
               </button>

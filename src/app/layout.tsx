@@ -13,9 +13,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AindaDá — Ainda dá pra usar?",
+  title: "AindaDa — Ainda da pra usar?",
   description:
-    "Digite o item e a data de abertura. Saiba na hora se ainda dá — comida, cosméticos, limpeza e mais.",
+    "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
+  metadataBase: new URL("https://aindada.app"),
+  openGraph: {
+    title: "AindaDa — Ainda da pra usar?",
+    description:
+      "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
+    locale: "pt_BR",
+    type: "website",
+    siteName: "AindaDa",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AindaDa — Ainda da pra usar?",
+    description:
+      "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
+  },
 };
 
 export default function RootLayout({

@@ -37,7 +37,7 @@ export function ResultCard({ result, date, mode }: Props) {
 
   return (
     <div className="flex flex-col gap-5" aria-live="polite">
-      <div className={`flex flex-col items-center rounded-2xl px-6 py-8 text-center ${softBg[result.status]}`}>
+      <div className={`flex flex-col items-center rounded-2xl px-6 py-8 text-center motion-safe:animate-fadeInUp ${softBg[result.status]}`}>
         <StatusSemaphore status={result.status} size="md" />
 
         <p className={`mt-4 text-lg font-bold tracking-tight ${textColor[result.status]}`}>
@@ -74,7 +74,7 @@ export function ResultCard({ result, date, mode }: Props) {
       </div>
 
       {result.rule.tips.length > 0 && (
-        <div>
+        <div className="motion-safe:animate-fadeInUp delay-1">
           <h2 className="mb-2 text-sm font-semibold text-ink">Dicas</h2>
           <ul className="flex flex-col gap-2">
             {result.rule.tips.map((tip) => (
@@ -90,7 +90,7 @@ export function ResultCard({ result, date, mode }: Props) {
       )}
 
       {(result.rule.category === "medicine" || result.rule.disclaimer) && (
-        <p className="rounded-xl border border-bad/30 bg-bad-soft px-3.5 py-3 text-xs leading-relaxed text-bad-text">
+        <p className="motion-safe:animate-fadeInUp delay-2 rounded-xl border border-bad/30 bg-bad-soft px-3.5 py-3 text-xs leading-relaxed text-bad-text">
           {result.rule.disclaimer ??
             "Não substitui orientação médica ou o rótulo do produto."}
         </p>

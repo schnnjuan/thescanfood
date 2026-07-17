@@ -106,11 +106,11 @@ export function ShareCard({ result }: Props) {
   );
 
   return (
-    <>
+    <div className="motion-safe:animate-fadeInUp delay-1">
       <button
         type="button"
         onClick={share}
-        className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-cta text-sm font-semibold text-cta-on transition-opacity hover:opacity-90 active:opacity-80"
+        className="pressable flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-cta text-sm font-semibold text-cta-on hover:opacity-90"
       >
         <Share2 className="h-4 w-4" strokeWidth={1.75} />
         Compartilhar no Instagram
@@ -118,6 +118,6 @@ export function ShareCard({ result }: Props) {
       <div className="sr-only" aria-hidden>
         {el}
       </div>
-    </>
+    </div>
   );
 }

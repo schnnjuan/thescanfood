@@ -16,14 +16,14 @@ export function SoftUpsell({ onDismiss }: Props) {
       <div className="mt-3 flex gap-2">
         <button
           type="button"
-          className="h-10 flex-1 cursor-pointer rounded-lg bg-accent text-sm font-semibold text-white hover:opacity-90"
+          className="pressable h-10 flex-1 cursor-pointer rounded-lg bg-accent text-sm font-semibold text-white"
           onClick={onDismiss}
         >
           Quero
         </button>
         <button
           type="button"
-          className="h-10 flex-1 cursor-pointer rounded-lg text-sm font-medium text-muted hover:text-ink"
+          className="pressable h-10 flex-1 cursor-pointer rounded-lg text-sm font-medium text-muted hover:text-ink"
           onClick={onDismiss}
         >
           Agora não

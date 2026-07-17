@@ -78,7 +78,7 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
         {openList && hits.length > 0 && (
           <ul
             ref={listRef}
-            className="absolute top-full z-20 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-border bg-surface shadow-sm"
+            className="absolute top-full z-20 mt-1 max-h-56 w-full origin-top overflow-auto rounded-xl border border-border bg-surface shadow-sm motion-safe:animate-pop"
             role="listbox"
           >
             {hits.map((rule) => (
@@ -157,7 +157,7 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
 
       <button
         type="submit"
-        className="h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-40"
+        className="pressable h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on hover:opacity-90 disabled:opacity-40"
         disabled={!query.trim() || !date}
       >
         Checar se ainda dá
