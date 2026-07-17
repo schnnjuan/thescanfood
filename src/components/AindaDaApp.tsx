@@ -7,6 +7,7 @@ import { HelpSheet } from "@/components/HelpSheet";
 import { NotFound } from "@/components/NotFound";
 import { ResultCard } from "@/components/ResultCard";
 import { ShareBar } from "@/components/ShareBar";
+import { ShareCard } from "@/components/ShareCard";
 import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
@@ -101,6 +102,7 @@ export function AindaDaApp() {
                 mode={screen.mode}
               />
               <ShareBar result={screen.outcome} />
+              <ShareCard result={screen.outcome} />
               <button
                 type="button"
                 onClick={() => reset()}
