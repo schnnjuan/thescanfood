@@ -48,11 +48,12 @@ export function searchItems(query: string, limit = 6, extraRules: ShelfRule[] = 
     .map((x) => x.rule);
 }
 
+const POPULAR_IDS = ["ketchup", "rimel", "leite", "maionese", "protetor-solar"];
+
 export function popularItems(): ShelfRule[] {
-  const ids = ["ketchup", "rimel", "leite", "maionese", "protetor-solar"];
-  return ids
-    .map((id) => rules.find((r) => r.id === id))
-    .filter((r): r is ShelfRule => Boolean(r));
+  const found = POPULAR_IDS.map((id) => rules.find((r) => r.id === id)).filter((r): r is ShelfRule => Boolean(r));
+  if (found.length >= 3) return found;
+  return rules.slice(0, 5);
 }
 
 function parseLocalDate(iso: string): Date {
@@ -121,7 +122,10 @@ function worse(a: Status, b: Status): Status {
 export function checkItem(input: CheckInput, extraRules: ShelfRule[] = []): CheckOutcome {
   const hits = searchItems(input.query, 1, extraRules);
   if (hits.length === 0) {
-    const partial = searchItems(input.query.slice(0, 3), 4);
+    const words = normalize(input.query).split(/\s+/).filter((w) => w.length >= 3);
+    const partial = words.length > 0
+      ? searchItems(words.sort((a, b) => b.length - a.length)[0], 4)
+      : popularItems().slice(0, 4);
     return {
       kind: "not_found",
       query: input.query,

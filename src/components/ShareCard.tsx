@@ -41,8 +41,13 @@ export function ShareCard({ result }: Props) {
 
       if (typeof navigator !== "undefined" && navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], title: "AindaDá" });
+      } else {
+        // desktop fallback: download
+        const a = document.createElement("a");
+        a.href = blob;
+        a.download = "aindada.png";
+        a.click();
       }
-      // no fallback — mobile share é o unico caminho
     } catch {
       // user cancelled or share failed — silent
     }

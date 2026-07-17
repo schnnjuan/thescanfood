@@ -10,10 +10,7 @@ export type ShelfRule = {
   label: string;
   category: Category;
   afterOpenDays?: number;
-  unopenedShelfDays?: number;
-  fridgeRequired?: boolean;
   tips: string[];
-  sources?: string[];
   disclaimer?: string;
 };
 

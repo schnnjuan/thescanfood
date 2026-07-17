@@ -33,13 +33,17 @@ export function NotFound({
   const [showManual, setShowManual] = useState(false);
   const [cat, setCat] = useState<Category>("other");
   const [days, setDays] = useState("");
-  const [tips, setTips] = useState("");
+  const [tipsText, setTipsText] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const d = parseInt(days, 10);
     if (isNaN(d) || d < 1) return;
-    onManualAdd({ category: cat, afterOpenDays: d, tips: tips ? [tips] : [] });
+    const tips = tipsText
+      .split("\n")
+      .map((t) => t.trim())
+      .filter(Boolean);
+    onManualAdd({ category: cat, afterOpenDays: d, tips });
   }
 
   return (
@@ -121,14 +125,14 @@ export function NotFound({
 
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-muted">
-              Dica (opcional)
+              Dicas (opcional, uma por linha)
             </label>
-            <input
-              type="text"
-              value={tips}
-              onChange={(e) => setTips(e.target.value)}
+            <textarea
+              value={tipsText}
+              onChange={(e) => setTipsText(e.target.value)}
               placeholder="ex: Guardar na geladeira"
-              className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              rows={3}
+              className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-base text-ink outline-none placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
           </div>
 

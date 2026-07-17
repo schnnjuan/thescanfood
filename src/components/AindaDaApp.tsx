@@ -56,7 +56,7 @@ export function AindaDaApp() {
 
     const newRule: ShelfRule = {
       id: `manual-${Date.now()}`,
-      names: [query.toLowerCase(), ...query.toLowerCase().split(" ")],
+      names: [query.toLowerCase()],
       label: query,
       category: input.category,
       afterOpenDays: input.afterOpenDays,

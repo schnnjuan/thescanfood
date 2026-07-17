@@ -79,7 +79,7 @@ function mapCategory(cat) {
 function convertItem(item) {
   const r = {
     id: `item-${item.id}`,
-    names: [item.nome.toLowerCase(), ...item.nome.toLowerCase().split(" ")],
+    names: [item.nome.toLowerCase()],
     label: item.nome,
     category: mapCategory(item.categoria),
     tips: item.dicas || [],

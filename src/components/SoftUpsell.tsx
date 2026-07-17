@@ -13,22 +13,13 @@ export function SoftUpsell({ onDismiss }: Props) {
       <p className="mt-1 text-xs leading-relaxed text-muted">
         Histórico + alertas no Pro. Em breve.
       </p>
-      <div className="mt-3 flex gap-2">
-        <button
-          type="button"
-          className="pressable h-10 flex-1 cursor-pointer rounded-lg bg-accent text-sm font-semibold text-white"
-          onClick={onDismiss}
-        >
-          Quero
-        </button>
-        <button
-          type="button"
-          className="pressable h-10 flex-1 cursor-pointer rounded-lg text-sm font-medium text-muted hover:text-ink"
-          onClick={onDismiss}
-        >
-          Agora não
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="pressable mt-3 h-10 w-full cursor-pointer rounded-lg text-sm font-medium text-muted hover:text-ink"
+      >
+        Dispensar
+      </button>
     </div>
   );
 }
