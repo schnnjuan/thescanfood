@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { AppHeader } from "@/components/AppHeader";
 import { CheckForm } from "@/components/CheckForm";
 import { HelpSheet } from "@/components/HelpSheet";
@@ -10,6 +11,7 @@ import { ShareCard } from "@/components/ShareCard";
 import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
+import { springs, distance } from "@/lib/motion-tokens";
 import type { Category, CheckOutcome, ShelfRule } from "@/lib/types";
 
 const CUSTOM_RULES_KEY = "aindada-custom-rules";
@@ -100,70 +102,98 @@ export function AindaDaApp() {
         onBack={() => reset()}
       />
 
-      {screen.name === "idle" && (
-        <main className="flex flex-1 flex-col gap-6 pt-6 motion-safe:animate-fadeIn">
-          <div>
-            <h1 className="text-balance text-3xl font-bold tracking-tight text-ink">
-              Ainda da pra usar?
-            </h1>
-            <p className="mt-2 text-sm text-muted">
-              Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda presta.
-            </p>
-          </div>
+      <AnimatePresence mode="wait">
+        {screen.name === "idle" && (
+          <motion.main
+            key="idle"
+            className="flex flex-1 flex-col gap-6 pt-6"
+            initial={{ opacity: 0, y: distance.sm }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -distance.sm }}
+            transition={springs.gentle}
+          >
+            <div>
+              <h1 className="text-balance text-3xl font-bold tracking-tight text-ink">
+                Ainda da pra usar?
+              </h1>
+              <p className="mt-2 text-sm text-muted">
+                Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda presta.
+              </p>
+            </div>
 
-          <CheckForm
-            key={formKey}
-            initialQuery={screen.prefill}
-            customRules={customRules}
-            onSubmit={runCheck}
-          />
-
-          <SuggestionChips
-            items={popular}
-            onPick={(label) => reset(label)}
-          />
-
-          <p className="text-center text-xs text-muted">
-            AindaDa — quando nao tem certeza, cheira. Referencia geral, rotulo e bom senso mandam.
-          </p>
-        </main>
-      )}
-
-      {screen.name === "result" && (
-        <main className="flex flex-1 flex-col gap-4 pt-2 motion-safe:animate-fadeIn">
-          {screen.outcome.kind === "hit" ? (
-            <>
-              <ResultCard
-                result={screen.outcome}
-                openedDate={screen.openedDate}
-                expiryDate={screen.expiryDate}
-              />
-
-              <ShareCard result={screen.outcome} />
-              {showUpsell && (
-                <div className="motion-safe:animate-fadeInUp delay-2">
-                  <SoftUpsell onDismiss={() => setUpsellDismissed(true)} />
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={() => reset()}
-                className="pressable motion-safe:animate-fadeInUp delay-3 h-11 w-full cursor-pointer text-sm font-medium text-muted hover:text-ink"
-              >
-                Checar outro item
-              </button>
-            </>
-          ) : (
-            <NotFound
-              query={screen.outcome.query}
-              suggestions={screen.outcome.suggestions}
-              onPick={(label) => reset(label)}
-              onReset={() => reset()}
-              onManualAdd={handleManualAdd}
+            <CheckForm
+              key={formKey}
+              initialQuery={screen.prefill}
+              customRules={customRules}
+              onSubmit={runCheck}
             />
-          )}
-        </main>
-      )}
+
+            <SuggestionChips
+              items={popular}
+              onPick={(label) => reset(label)}
+            />
+
+            <p className="text-center text-xs text-muted">
+              AindaDa — quando nao tem certeza, cheira. Referencia geral, rotulo e bom senso mandam.
+            </p>
+          </motion.main>
+        )}
+
+        {screen.name === "result" && (
+          <motion.main
+            key="result"
+            className="flex flex-1 flex-col gap-4 pt-2"
+            initial={{ opacity: 0, y: distance.lg }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -distance.lg }}
+            transition={springs.gentle}
+          >
+            {screen.outcome.kind === "hit" ? (
+              <>
+                <ResultCard
+                  result={screen.outcome}
+                  openedDate={screen.openedDate}
+                  expiryDate={screen.expiryDate}
+                />
+
+                <ShareCard result={screen.outcome} />
+                <AnimatePresence>
+                  {showUpsell && (
+                    <motion.div
+                      key="upsell"
+                      initial={{ opacity: 0, y: distance.md, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -distance.sm, scale: 0.95 }}
+                      transition={springs.snappy}
+                    >
+                      <SoftUpsell onDismiss={() => setUpsellDismissed(true)} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <motion.button
+                  type="button"
+                  onClick={() => reset()}
+                  className="pressable h-11 w-full cursor-pointer text-sm font-medium text-muted hover:text-ink"
+                  initial={{ opacity: 0, y: distance.sm }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...springs.snappy, delay: 0.15 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  Checar outro item
+                </motion.button>
+              </>
+            ) : (
+              <NotFound
+                query={screen.outcome.query}
+                suggestions={screen.outcome.suggestions}
+                onPick={(label) => reset(label)}
+                onReset={() => reset()}
+                onManualAdd={handleManualAdd}
+              />
+            )}
+          </motion.main>
+        )}
+      </AnimatePresence>
 
       <HelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>

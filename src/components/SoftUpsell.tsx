@@ -1,5 +1,8 @@
 "use client";
 
+import { motion } from "motion/react";
+import { springs, scale as scaleVal } from "@/lib/motion-tokens";
+
 type Props = {
   onDismiss: () => void;
 };
@@ -13,13 +16,15 @@ export function SoftUpsell({ onDismiss }: Props) {
       <p className="mt-1 text-xs leading-relaxed text-muted">
         Histórico + alertas no Pro. Em breve.
       </p>
-      <button
+      <motion.button
         type="button"
         onClick={onDismiss}
         className="pressable mt-3 h-10 w-full cursor-pointer rounded-lg text-sm font-medium text-muted hover:text-ink"
+        whileTap={{ scale: scaleVal.press }}
+        transition={springs.instant}
       >
         Dispensar
-      </button>
+      </motion.button>
     </div>
   );
 }

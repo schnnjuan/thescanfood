@@ -59,23 +59,37 @@ export function NotFound({
         </p>
       </div>
 
-      {suggestions.length > 0 && (
-        <div className="motion-safe:animate-fadeInUp delay-1 flex flex-col gap-2">
-          <p className="text-sm font-medium text-muted">Sugestoes</p>
-          <div className="flex flex-wrap gap-2">
-            {suggestions.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => onPick(s.label)}
-                className="pressable h-10 cursor-pointer rounded-full border border-border bg-surface px-3.5 text-sm font-medium text-ink hover:border-accent hover:bg-accent-soft"
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {suggestions.length > 0 && (
+          <motion.div
+            key="suggestions"
+            className="flex flex-col gap-2"
+            initial={{ opacity: 0, y: distance.sm }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -distance.sm }}
+            transition={springs.snappy}
+          >
+            <p className="text-sm font-medium text-muted">Sugestoes</p>
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((s, i) => (
+                <motion.button
+                  key={s.id}
+                  type="button"
+                  onClick={() => onPick(s.label)}
+                  className="pressable h-10 cursor-pointer rounded-full border border-border bg-surface px-3.5 text-sm font-medium text-ink hover:border-accent hover:bg-accent-soft"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ ...springs.snappy, delay: i * 0.05 }}
+                  whileHover={{ scale: 1.04, borderColor: "#4f46e5" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {s.label}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence mode="wait">
         {!showManual ? (

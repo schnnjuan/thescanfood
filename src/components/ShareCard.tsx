@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useMemo, useRef } from "react";
+import { motion } from "motion/react";
 import { toPng } from "html-to-image";
 import { Share2 } from "lucide-react";
 import { StatusSemaphore } from "@/components/StatusSemaphore";
 import { pickPhrase } from "@/lib/phrases";
+import { springs, scale as scaleVal } from "@/lib/motion-tokens";
 import type { CheckResult } from "@/lib/types";
 
 const statusLabel: Record<string, string> = {
@@ -112,14 +114,16 @@ export function ShareCard({ result }: Props) {
 
   return (
     <div className="motion-safe:animate-fadeInUp delay-1">
-      <button
+      <motion.button
         type="button"
         onClick={share}
         className="pressable flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-cta text-sm font-semibold text-cta-on hover:opacity-90"
+        whileTap={{ scale: scaleVal.press }}
+        transition={springs.instant}
       >
         <Share2 className="h-4 w-4" strokeWidth={1.75} />
         Compartilhar no Instagram
-      </button>
+      </motion.button>
       <div className="sr-only" aria-hidden>
         {el}
       </div>
