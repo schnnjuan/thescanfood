@@ -1,5 +1,5 @@
-import { AindaDaApp } from "@/components/AindaDaApp";
+import { LandingPage } from "@/components/LandingPage";
 
 export default function Home() {
-  return <AindaDaApp />;
+  return <LandingPage />;
 }
