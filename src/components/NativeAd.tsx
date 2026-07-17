@@ -1,31 +1,61 @@
 "use client";
 
-import type { NativeAd as AdType } from "@/lib/ads";
+import { useEffect, useId, useRef } from "react";
+import { ADSENSE } from "@/lib/ads";
 
 type Props = {
-  ad: AdType;
+  slot: "lp" | "result";
 };
 
-export function NativeAd({ ad }: Props) {
+declare global {
+  interface Window {
+    adsbygoogle: unknown[];
+  }
+}
+
+/**
+ * Anuncio nativo do AdSense (in-feed / in-article).
+ * O script do AdSense e carregado no layout raiz com strategy="lazyOnload".
+ */
+export function NativeAd({ slot }: Props) {
+  const insId = useId();
+  const pushed = useRef(false);
+  const dataAdSlot = slot === "lp" ? ADSENSE.slotLP : ADSENSE.slotResult;
+
+  useEffect(() => {
+    if (pushed.current) return;
+    if (!ADSENSE.client) return; // sem config, nao ativa
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      pushed.current = true;
+    } catch {
+      // silencioso — bloqueador ou rede lenta
+    }
+  }, []);
+
+  if (!ADSENSE.client) {
+    // fallback visivel so em dev — avisa que falta config
+    if (process.env.NODE_ENV === "development") {
+      return (
+        <div className="rounded-xl border-2 border-dashed border-warn/40 bg-warn-soft px-4 py-3 text-xs text-warn-text">
+          Anuncio AdSense — configurar NEXT_PUBLIC_ADSENSE_CLIENT
+        </div>
+      );
+    }
+    return null;
+  }
+
   return (
-    <a
-      href={ad.href}
-      target="_blank"
-      rel="noopener noreferrer sponsored"
-      className="pressable group flex flex-col gap-1 rounded-xl border border-border/60 bg-surface px-4 py-3.5 transition-colors hover:border-accent/30 hover:bg-accent-soft/50"
-    >
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-sm font-semibold text-ink group-hover:text-accent-text">
-          {ad.headline}
-        </p>
-        <span className="shrink-0 rounded-md border border-border/40 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted/60">
-          Patrocinado
-        </span>
-      </div>
-      <p className="text-xs leading-relaxed text-muted">{ad.body}</p>
-      <span className="text-xs font-medium text-accent group-hover:underline">
-        {ad.cta} &rarr;
-      </span>
-    </a>
+    <div className="min-h-[100px]">
+      <ins
+        id={insId}
+        className="adsbygoogle"
+        style={{ display: "block" }}
+        data-ad-client={ADSENSE.client}
+        data-ad-slot={dataAdSlot}
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </div>
   );
 }

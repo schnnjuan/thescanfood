@@ -11,8 +11,8 @@ import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
 import { NativeAd } from "@/components/NativeAd";
-import { nextAd } from "@/lib/ads";
-import type { CheckOutcome, Category } from "@/lib/types";
+import { amazonSearchUrl } from "@/lib/ads";
+import type { CheckOutcome } from "@/lib/types";
 
 type Screen =
   | { name: "idle"; prefill?: string }
@@ -93,8 +93,16 @@ export function AindaDaApp() {
                 openedDate={screen.openedDate}
                 expiryDate={screen.expiryDate}
               />
-              <div className="motion-safe:animate-fadeInUp delay-1">
-                <NativeAd ad={nextAd(screen.outcome.rule.category)} />
+              <div className="motion-safe:animate-fadeInUp delay-1 flex flex-col gap-2">
+                <NativeAd slot="result" />
+                <a
+                  href={amazonSearchUrl(screen.outcome.rule.label)}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="pressable flex h-10 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-border bg-surface text-xs font-medium text-muted transition-colors hover:border-accent/30 hover:text-accent-text"
+                >
+                  Precisa repor? Ver precos &rarr;
+                </a>
               </div>
               <ShareCard result={screen.outcome} />
               {showUpsell && (
