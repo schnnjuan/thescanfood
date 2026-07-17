@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { CheckForm } from "@/components/CheckForm";
 import { HelpSheet } from "@/components/HelpSheet";
@@ -10,7 +10,9 @@ import { ShareCard } from "@/components/ShareCard";
 import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
-import type { CheckOutcome } from "@/lib/types";
+import type { Category, CheckOutcome, ShelfRule } from "@/lib/types";
+
+const CUSTOM_RULES_KEY = "aindada-custom-rules";
 
 type Screen =
   | { name: "idle"; prefill?: string }
@@ -22,10 +24,19 @@ export function AindaDaApp() {
   const [checkCount, setCheckCount] = useState(0);
   const [upsellDismissed, setUpsellDismissed] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  const [customRules, setCustomRules] = useState<ShelfRule[]>([]);
   const popular = useMemo(() => popularItems(), []);
 
+  // load custom rules from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CUSTOM_RULES_KEY);
+      if (saved) setCustomRules(JSON.parse(saved));
+    } catch {}
+  }, []);
+
   function runCheck(payload: { query: string; openedDate?: string; expiryDate?: string }) {
-    const outcome = checkItem(payload);
+    const outcome = checkItem(payload, customRules);
     setCheckCount((c) => c + 1);
     setScreen({
       name: "result",
@@ -33,6 +44,41 @@ export function AindaDaApp() {
       openedDate: payload.openedDate,
       expiryDate: payload.expiryDate,
     });
+  }
+
+  function handleManualAdd(input: {
+    category: Category;
+    afterOpenDays: number;
+    tips: string[];
+  }) {
+    if (screen.name !== "result" || screen.outcome.kind !== "not_found") return;
+    const query = screen.outcome.query;
+
+    const newRule: ShelfRule = {
+      id: `manual-${Date.now()}`,
+      names: [query.toLowerCase(), ...query.toLowerCase().split(" ")],
+      label: query,
+      category: input.category,
+      afterOpenDays: input.afterOpenDays,
+      tips: input.tips,
+    };
+
+    const updated = [newRule, ...customRules];
+    try {
+      localStorage.setItem(CUSTOM_RULES_KEY, JSON.stringify(updated));
+    } catch {}
+    setCustomRules(updated);
+
+    // re-check with same dates + new rule
+    const outcome = checkItem(
+      {
+        query,
+        openedDate: screen.openedDate,
+        expiryDate: screen.expiryDate,
+      },
+      updated,
+    );
+    setScreen({ name: "result", outcome, openedDate: screen.openedDate, expiryDate: screen.expiryDate });
   }
 
   function reset(prefill?: string) {
@@ -68,6 +114,7 @@ export function AindaDaApp() {
           <CheckForm
             key={formKey}
             initialQuery={screen.prefill}
+            customRules={customRules}
             onSubmit={runCheck}
           />
 
@@ -112,6 +159,7 @@ export function AindaDaApp() {
               suggestions={screen.outcome.suggestions}
               onPick={(label) => reset(label)}
               onReset={() => reset()}
+              onManualAdd={handleManualAdd}
             />
           )}
         </main>

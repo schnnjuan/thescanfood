@@ -7,6 +7,7 @@ import type { Category, ShelfRule } from "@/lib/types";
 type Props = {
   onSubmit: (payload: { query: string; openedDate?: string; expiryDate?: string }) => void;
   initialQuery?: string;
+  customRules?: ShelfRule[];
 };
 
 const DAY_MS = 86400000;
@@ -45,7 +46,7 @@ const expiryPresets = [
   { label: "1 ano", offset: 365 },
 ];
 
-export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
+export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Props) {
   const itemId = useId();
   const openId = useId();
   const expId = useId();
@@ -63,10 +64,10 @@ export function CheckForm({ onSubmit, initialQuery = "" }: Props) {
       return;
     }
     const t = setTimeout(() => {
-      setHits(searchItems(query, 6));
+      setHits(searchItems(query, 6, customRules));
     }, 150);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, customRules]);
 
   function pick(rule: ShelfRule) {
     setQuery(rule.label);

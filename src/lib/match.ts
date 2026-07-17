@@ -33,10 +33,11 @@ function scoreName(query: string, name: string): number {
   return 40 + (overlap.length / Math.max(qTokens.length, nTokens.length)) * 30;
 }
 
-export function searchItems(query: string, limit = 6): ShelfRule[] {
+export function searchItems(query: string, limit = 6, extraRules: ShelfRule[] = []): ShelfRule[] {
   const q = normalize(query);
   if (!q || q.length < 1) return [];
-  return rules
+  const allRules = [...rules, ...extraRules];
+  return allRules
     .map((rule) => ({
       rule,
       score: Math.max(...rule.names.map((n) => scoreName(q, n)), scoreName(q, rule.label)),
@@ -117,8 +118,8 @@ function worse(a: Status, b: Status): Status {
   return severityOrder[a] >= severityOrder[b] ? a : b;
 }
 
-export function checkItem(input: CheckInput): CheckOutcome {
-  const hits = searchItems(input.query, 1);
+export function checkItem(input: CheckInput, extraRules: ShelfRule[] = []): CheckOutcome {
+  const hits = searchItems(input.query, 1, extraRules);
   if (hits.length === 0) {
     const partial = searchItems(input.query.slice(0, 3), 4);
     return {
