@@ -10,10 +10,13 @@ const pools: Record<Status, string[]> = {
     "Ta novo ainda, parceiro.",
     "Pode mandar ver.",
     "Zero preocupacao.",
+    "Suave na nave.",
     "Ta sussa, pode usar.",
-    "Vai fundo, ta safe.",
     "Ta tranquilao, fecha.",
-    "Ta suave, nem esquenta.",
+    "Ta no grau, coracao.",
+    "Sangue bom, ta novo.",
+    "Pode ir sem medo.",
+    "Ta conservado, confia.",
   ],
   warn: [
     "Corre que ainda da tempo.",
@@ -28,6 +31,9 @@ const pools: Record<Status, string[]> = {
     "Ultimo aviso, parceiro.",
     "Ta na corda bamba, usa logo.",
     "Ja ta esticando, nao da mole.",
+    "Ta nos ultimos suspiros, parça.",
+    "Se pah, usa hoje.",
+    "Relogio ta correndo, irmao.",
   ],
   bad: [
     "Descarta essa merda.",
@@ -42,6 +48,9 @@ const pools: Record<Status, string[]> = {
     "Deu ruim, descarta.",
     "Ta vencido, nao adianta insistir.",
     "Agir como se ainda prestasse e escolha sua.",
+    "Meteu essa? Ta vencido, po.",
+    "Ta mais vencido que casamento de quem trai.",
+    "Passou da validade e do bom senso.",
   ],
 };
 
@@ -52,14 +61,17 @@ const categorySpecific: Record<Status, Partial<Record<Category, string[]>>> = {
     food: [
       "Barriga vai agradecer se descartar.",
       "Intoxicacao alimentar nao e meme.",
+      "Ta mofado? Ja era, descarta.",
     ],
     cosmetic: [
       "Passar isso no rosto agora e crime.",
       "Ta vencido, nao adianta passar.",
+      "Sua pele merece coisa melhor, descarta.",
     ],
     medicine: [
       "Remedio vencido nao faz efeito, descarta.",
       "Nao brinca com remedio vencido.",
+      "Melhor ir no medico do que se automedicar.",
     ],
   },
 };

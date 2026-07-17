@@ -1,29 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #faf9f5;
+  --bg: #f5f5f2;
   --surface: #ffffff;
-  --ink: #131620;
-  --muted: #5b6472;
-  --border: #e8e6e0;
+  --ink: #171717;
+  --muted: #6b6b6b;
+  --border: #d4d4d4;
 
-  --accent: #4f46e5;
-  --accent-soft: #eef2ff;
-  --accent-text: #4338ca;
+  --accent: #ff3b30;
+  --accent-soft: #fff0ef;
 
-  --ok: #10b981;
-  --ok-text: #047857;
+  --ok: #059669;
   --ok-soft: #ecfdf5;
 
-  --warn: #f59e0b;
-  --warn-text: #b45309;
+  --warn: #d97706;
   --warn-soft: #fffbeb;
 
-  --bad: #f43f5e;
-  --bad-text: #be123c;
-  --bad-soft: #fff1f2;
+  --bad: #dc2626;
+  --bad-soft: #fef2f2;
 
-  --cta: #131620;
+  --cta: #ff3b30;
   --cta-on: #ffffff;
 
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -39,20 +35,15 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
-  --color-accent-text: var(--accent-text);
   --color-ok: var(--ok);
-  --color-ok-text: var(--ok-text);
   --color-ok-soft: var(--ok-soft);
   --color-warn: var(--warn);
-  --color-warn-text: var(--warn-text);
   --color-warn-soft: var(--warn-soft);
   --color-bad: var(--bad);
-  --color-bad-text: var(--bad-text);
   --color-bad-soft: var(--bad-soft);
   --color-cta: var(--cta);
   --color-cta-on: var(--cta-on);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -65,82 +56,76 @@
   }
 }
 
-body {
+html {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+button, input, textarea, select {
+  border-radius: 5px;
 }
 
 button {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-@keyframes pop {
-  from {
-    transform: scale(0.96);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+input, textarea, select {
+  outline: none;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+input:focus, textarea:focus, select:focus {
+  border-color: var(--ink);
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ——— Keyframes ——— */
+
+@keyframes laser-scan {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(80px); }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+@keyframes beat {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
 }
 
-@keyframes press {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(0.97); }
-  100% { transform: scale(1); }
+.motion-safe\:animate-laser {
+  animation: laser-scan 2s ease-in-out infinite;
+}
+.motion-safe\:animate-beat {
+  animation: beat 1.5s ease-in-out infinite;
 }
 
-.motion-safe\:animate-fadeIn {
-  animation: fadeIn 200ms var(--ease-smooth) both;
-}
-
-.motion-safe\:animate-fadeInUp {
-  animation: fadeInUp 300ms var(--ease-smooth) both;
-}
-
-.motion-safe\:animate-slideUp {
-  animation: slideUp 300ms var(--ease-smooth) both;
-}
-
-.motion-safe\:animate-pop {
-  animation: pop 350ms var(--ease-spring) both;
-}
-
-.motion-safe\:active\:animate-press:active {
-  animation: press 180ms var(--ease-spring);
-}
-
-/* staggered entrance — each child delays */
-.delay-1 { animation-delay: 40ms; }
-.delay-2 { animation-delay: 80ms; }
-.delay-3 { animation-delay: 120ms; }
-.delay-4 { animation-delay: 160ms; }
-.delay-5 { animation-delay: 200ms; }
-
-/* transition-based press (Emil style) */
 .pressable {
-  transition: transform 140ms var(--ease-spring);
+  transition: transform 80ms var(--ease-spring);
 }
-.pressable:active {
+.pressable[data-pressed="true"] {
   transform: scale(0.97);
+}
+
+/* Touch feedback via event delegation — see layout.tsx script */
+.pressable-touch {
+  transform: scale(0.97) !important;
 }

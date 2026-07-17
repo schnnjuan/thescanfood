@@ -1,8 +1,5 @@
 "use client";
 
-import { AlertTriangle, Check, X } from "lucide-react";
-import { motion } from "motion/react";
-import { springs } from "@/lib/motion-tokens";
 import type { Status } from "@/lib/types";
 
 type Props = {
@@ -10,16 +7,16 @@ type Props = {
   size?: "sm" | "md" | "lg";
 };
 
-const config: Record<Status, { icon: typeof Check; fill: string; dim: string }> = {
-  ok:   { icon: Check, fill: "#10B981", dim: "#D1FAE5" },
-  warn: { icon: AlertTriangle, fill: "#F59E0B", dim: "#FEF3C7" },
-  bad:  { icon: X, fill: "#F43F5E", dim: "#FEE2E2" },
+const config: Record<Status, { fill: string }> = {
+  ok:   { fill: "#059669" },
+  warn: { fill: "#d97706" },
+  bad:  { fill: "#dc2626" },
 };
 
 const sizes = {
-  sm: { light: 28, icon: 12, gap: 4, container: 40 },
-  md: { light: 36, icon: 16, gap: 5, container: 52 },
-  lg: { light: 48, icon: 22, gap: 6, container: 68 },
+  sm: { light: 10, gap: 3 },
+  md: { light: 14, gap: 4 },
+  lg: { light: 20, gap: 6 },
 };
 
 export function StatusSemaphore({ status, size = "md" }: Props) {
@@ -28,45 +25,24 @@ export function StatusSemaphore({ status, size = "md" }: Props) {
 
   return (
     <div
-      className="flex flex-col items-center rounded-xl bg-surface/50 px-3 py-2"
+      className="flex flex-col items-center"
       style={{ gap: s.gap }}
       aria-label={`Status: ${status}`}
     >
       {lights.map((light) => {
         const c = config[light];
         const active = light === status;
-        const IconComp = c.icon;
         return (
-          <motion.div
+          <div
             key={light}
-            className="flex items-center justify-center rounded-full"
-            animate={{
-              background: active ? c.fill : c.dim,
-              opacity: active ? 1 : 0.3,
-              scale: active ? 1 : 0.85,
-              boxShadow: active
-                ? `0 0 8px ${c.fill}30, 0 0 16px ${c.fill}15`
-                : "0px 0px 0px rgba(0,0,0,0)",
+            className="rounded-full"
+            style={{
+              width: s.light,
+              height: s.light,
+              background: active ? c.fill : "#e5e5e5",
+              opacity: active ? 1 : 0.35,
             }}
-            transition={springs.bouncy}
-            style={{ width: s.light, height: s.light }}
-          >
-            {active && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={springs.snappy}
-              >
-                <IconComp
-                  size={s.icon}
-                  strokeWidth={2.5}
-                  color="white"
-                  aria-hidden
-                />
-              </motion.div>
-            )}
-          </motion.div>
+          />
         );
       })}
     </div>

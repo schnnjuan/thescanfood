@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { springs, distance } from "@/lib/motion-tokens";
 import { checkItem } from "@/lib/match";
 import type { OFFProduct } from "@/lib/openfoodfacts";
 import type { Category, CheckOutcome } from "@/lib/types";
@@ -48,6 +46,12 @@ type Props = {
   onBack: () => void;
 };
 
+const stripColor: Record<string, string> = {
+  ok: "bg-ok",
+  warn: "bg-warn",
+  bad: "bg-bad",
+};
+
 export function ScannerResult({ product, onConfirm, onRetry, onBack }: Props) {
   const [cat, setCat] = useState<Category>(product.category as Category || "food");
   const [days, setDays] = useState("7");
@@ -56,80 +60,57 @@ export function ScannerResult({ product, onConfirm, onRetry, onBack }: Props) {
 
   const now = new Date();
 
-  // preview da checagem
   const preview: CheckOutcome | null = useMemo(() => {
     const d = parseInt(days, 10);
     if (isNaN(d) || d < 1) return null;
     if (!openedDate && !expiryDate) return null;
-    return checkItem({
-      query: product.name,
-      openedDate: openedDate || undefined,
-      expiryDate: expiryDate || undefined,
-    });
+    return checkItem({ query: product.name, openedDate: openedDate || undefined, expiryDate: expiryDate || undefined });
   }, [product.name, days, openedDate, expiryDate]);
 
   function handleConfirm() {
     const d = parseInt(days, 10);
     if (isNaN(d) || d < 1) return;
-    onConfirm({
-      name: product.name,
-      category: cat,
-      afterOpenDays: d,
-      openedDate: openedDate || undefined,
-      expiryDate: expiryDate || undefined,
-    });
+    onConfirm({ name: product.name, category: cat, afterOpenDays: d, openedDate: openedDate || undefined, expiryDate: expiryDate || undefined });
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-1 flex-col">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <button
           type="button"
           onClick={onBack}
-          className="pressable cursor-pointer text-sm font-medium text-ink hover:text-accent-text"
+          className="pressable cursor-pointer text-sm font-bold text-ink"
         >
           ← Voltar
         </button>
-        <span className="text-sm font-semibold text-ink">Confirmar</span>
-        <div className="w-14" />
+        <span className="text-sm font-bold text-ink">Confirmar</span>
       </div>
 
-      <motion.div
-        className="flex flex-col gap-5 rounded-2xl border border-border bg-surface px-5 py-5"
-        initial={{ opacity: 0, y: distance.md }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={springs.gentle}
-      >
+      <div className="flex flex-col gap-4 px-4 pt-4 pb-8">
         {/* product info */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 border border-border bg-white px-4 py-3">
           {product.imageUrl && (
-            <img
-              src={product.imageUrl}
-              alt=""
-              className="h-14 w-14 rounded-lg border border-border object-cover"
-            />
+            <img src={product.imageUrl} alt="" className="h-10 w-10 border border-border object-cover shrink-0" />
           )}
           <div className="min-w-0 flex-1">
-            <p className="font-semibold text-ink">{product.name}</p>
-            {product.brand && (
-              <p className="text-xs text-muted">{product.brand}</p>
-            )}
+            <p className="font-bold text-ink text-sm">{product.name}</p>
+            {product.brand && <p className="text-xs text-muted">{product.brand}</p>}
           </div>
         </div>
 
         {/* categoria */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-muted">Categoria</label>
-          <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-bold text-ink">Categoria</label>
+          <div className="flex flex-wrap gap-1">
             {CATEGORIES.map((c) => (
               <button
                 key={c.value}
                 type="button"
                 onClick={() => setCat(c.value)}
-                className={`pressable h-8 cursor-pointer rounded-lg px-3 text-xs font-medium ${
+                className={`pressable h-8 px-3 text-xs font-bold ${
                   cat === c.value
-                    ? "bg-ink text-cta-on"
-                    : "border border-border bg-surface text-muted"
+                    ? "bg-ink text-white"
+                    : "border border-border bg-white text-ink"
                 }`}
               >
                 {c.label}
@@ -140,37 +121,37 @@ export function ScannerResult({ product, onConfirm, onRetry, onBack }: Props) {
 
         {/* dias apos abrir */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-muted">Dias apos abrir</label>
+          <label className="text-[11px] font-bold text-ink">Dias apos abrir</label>
           <input
             type="number"
             min="1"
             value={days}
             onChange={(e) => setDays(e.target.value)}
-            className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="h-11 border border-border bg-white px-3 text-sm text-ink"
           />
         </div>
 
         {/* data abertura */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-muted">
-            Data de abertura <span className="text-muted/70">(opcional)</span>
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-bold text-ink">
+            Data de abertura <span className="font-normal text-muted">(opcional)</span>
           </label>
           <input
             type="date"
             value={openedDate}
             onChange={(e) => setOpenedDate(e.target.value)}
-            className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="h-11 border border-border bg-white px-3 text-sm text-ink"
           />
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-4 gap-1">
             {OPEN_PRESETS.map((p) => (
               <button
                 key={p.label}
                 type="button"
                 onClick={() => setOpenedDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
-                className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
-                  openedDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
-                    ? "bg-ink text-cta-on"
-                    : "border border-border bg-surface text-muted"
+className={`pressable h-8 text-xs font-bold ${
+                openedDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
+                    ? "bg-ink text-white"
+                    : "border border-border bg-white text-ink"
                 }`}
               >
                 {p.label}
@@ -180,26 +161,26 @@ export function ScannerResult({ product, onConfirm, onRetry, onBack }: Props) {
         </div>
 
         {/* validade */}
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-medium text-muted">
-            Validade <span className="text-muted/70">(opcional)</span>
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-bold text-ink">
+            Validade <span className="font-normal text-muted">(opcional)</span>
           </label>
           <input
             type="date"
             value={expiryDate}
             onChange={(e) => setExpiryDate(e.target.value)}
-            className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+            className="h-11 border border-border bg-white px-3 text-sm text-ink"
           />
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-4 gap-1">
             {EXPIRY_PRESETS.map((p) => (
               <button
                 key={p.label}
                 type="button"
                 onClick={() => setExpiryDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
-                className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
-                  expiryDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
-                    ? "bg-ink text-cta-on"
-                    : "border border-border bg-surface text-muted"
+className={`pressable h-8 text-xs font-bold ${
+                expiryDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
+                    ? "bg-ink text-white"
+                    : "border border-border bg-white text-ink"
                 }`}
               >
                 {p.label}
@@ -208,45 +189,35 @@ export function ScannerResult({ product, onConfirm, onRetry, onBack }: Props) {
           </div>
         </div>
 
-        {/* preview da checagem */}
-        <AnimatePresence mode="wait">
-          {preview && preview.kind === "hit" && (
-            <motion.div
-              key="preview"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={springs.snappy}
-              className="overflow-hidden"
-            >
-              <div className={`rounded-xl px-4 py-3 text-center text-sm font-semibold ${
-                preview.status === "ok" ? "bg-ok-soft text-ok" :
-                preview.status === "warn" ? "bg-warn-soft text-warn" :
-                "bg-bad-soft text-bad"
-              }`}>
+        {/* preview com left strip */}
+        {preview && preview.kind === "hit" && (
+          <div className="relative flex border border-border bg-white">
+            <div className={`w-[3px] shrink-0 ${stripColor[preview.status]}`} />
+            <div className="flex flex-1 items-center px-3 py-3">
+              <p className="text-sm font-bold text-ink">
                 {preview.statusLabel} — {preview.daysLabel}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </p>
+            </div>
+          </div>
+        )}
 
         <button
           type="button"
           onClick={handleConfirm}
           disabled={!openedDate && !expiryDate}
-          className="pressable h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on disabled:opacity-40"
+          className="pressable mt-1 h-11 border border-ink bg-ink text-sm font-bold text-white disabled:opacity-40"
         >
-          Adicionar à dispensa
+          Adicionar a dispensa
         </button>
-      </motion.div>
 
-      <button
-        type="button"
-        onClick={onRetry}
-        className="pressable h-11 w-full cursor-pointer rounded-xl border border-border bg-surface text-sm font-medium text-muted hover:text-ink"
-      >
-        Escanear outro
-      </button>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="pressable h-11 border border-ink bg-white text-sm font-bold text-ink"
+        >
+          Escanear outro
+        </button>
+      </div>
     </div>
   );
 }

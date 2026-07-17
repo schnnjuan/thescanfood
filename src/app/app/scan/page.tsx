@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { springs, distance } from "@/lib/motion-tokens";
+import { useRouter } from "next/navigation";
+import { AnimatePresence } from "motion/react";
 import { Scanner } from "@/components/Scanner";
 import { ScannerResult } from "@/components/ScannerResult";
 import { addItem } from "@/lib/pantry";
@@ -16,8 +16,12 @@ type ScanScreen =
   | { name: "done" };
 
 export default function ScanPage() {
+  const router = useRouter();
   const [screen, setScreen] = useState<ScanScreen>({ name: "scanner" });
   const [badges, setBadges] = useState<string[]>([]);
+
+  const goBack = useCallback(() => router.push("/app"), [router]);
+  const goToScanner = useCallback(() => setScreen({ name: "scanner" }), []);
 
   const handleProduct = useCallback((product: OFFProduct) => {
     setScreen({ name: "result", product });
@@ -54,83 +58,54 @@ export default function ScanPage() {
   );
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col overflow-x-hidden px-4 pb-8 pt-1">
-      <AnimatePresence mode="wait">
-        {screen.name === "scanner" && (
-          <motion.div
-            key="scanner"
-            className="flex flex-1 flex-col"
-            initial={{ opacity: 0, y: distance.sm }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -distance.sm }}
-            transition={springs.gentle}
-          >
-            <Scanner
-              onProduct={handleProduct}
-              onBack={() => window.history.back()}
-            />
-          </motion.div>
-        )}
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col overflow-x-hidden">
+      {screen.name === "scanner" && (
+        <Scanner onProduct={handleProduct} onBack={goBack} />
+      )}
 
+      <AnimatePresence mode="wait">
         {screen.name === "result" && (
-          <motion.div
-            key="result"
-            className="flex flex-1 flex-col"
-            initial={{ opacity: 0, y: distance.md }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -distance.md }}
-            transition={springs.gentle}
-          >
+          <div key="result" className="flex flex-1 flex-col">
             <ScannerResult
               product={screen.product}
               onConfirm={handleConfirm}
-              onRetry={() => setScreen({ name: "scanner" })}
-              onBack={() => setScreen({ name: "scanner" })}
+              onRetry={goToScanner}
+              onBack={goToScanner}
             />
-          </motion.div>
+          </div>
         )}
 
         {screen.name === "done" && (
-          <motion.div
-            key="done"
-            className="flex flex-1 flex-col items-center justify-center gap-6"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={springs.gentle}
-          >
-            <div className="rounded-2xl bg-ok-soft px-8 py-8 text-center">
-              <p className="text-5xl">✅</p>
-              <p className="mt-4 text-lg font-bold text-ok">Adicionado à dispensa!</p>
+          <div key="done" className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
+            <div className="border border-ok bg-ok-soft px-8 py-6 text-center">
+              <p className="text-4xl font-extrabold text-ok">Feito!</p>
+              <p className="mt-2 text-xs text-ok">Item adicionado a dispensa.</p>
             </div>
-
             {badges.length > 0 && (
-              <div className="rounded-2xl bg-accent-soft px-6 py-4 text-center">
-                <p className="text-sm font-semibold text-accent-text">
-                  Novas conquistas!
-                </p>
+              <div className="border border-border bg-white px-5 py-4 text-center">
+                <p className="text-[11px] font-bold text-ink">Novas conquistas</p>
                 {badges.map((b) => (
-                  <p key={b} className="mt-1 text-sm text-muted">{b}</p>
+                  <p key={b} className="mt-1 text-xs text-muted">{b}</p>
                 ))}
               </div>
             )}
-
-            <div className="flex flex-col gap-2 w-full">
+            <div className="flex w-full flex-col gap-2">
               <button
                 type="button"
                 onClick={() => { setScreen({ name: "scanner" }); setBadges([]); }}
-                className="pressable h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on"
+                className="pressable h-11 w-full border border-ink bg-ink text-sm font-bold text-white"
               >
                 Escanear outro
               </button>
               <button
                 type="button"
-                onClick={() => window.history.back()}
-                className="pressable h-11 w-full cursor-pointer rounded-xl border border-border bg-surface text-sm font-medium text-muted hover:text-ink"
+                onClick={goBack}
+                className="pressable h-11 w-full border border-ink bg-white text-sm font-bold text-ink"
               >
                 Voltar
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

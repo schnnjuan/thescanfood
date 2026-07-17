@@ -37,7 +37,7 @@ export function NativeAd({ slot }: Props) {
     // fallback visivel so em dev — avisa que falta config
     if (process.env.NODE_ENV === "development") {
       return (
-        <div className="rounded-xl border-2 border-dashed border-warn/40 bg-warn-soft px-4 py-3 text-xs text-warn-text">
+        <div className="border-2 border-dashed border-warn/40 bg-warn-soft px-4 py-3 text-xs text-warn-text">
           Anuncio AdSense — configurar NEXT_PUBLIC_ADSENSE_CLIENT
         </div>
       );

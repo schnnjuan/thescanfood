@@ -1,7 +1,5 @@
 "use client";
 
-import { CircleHelp } from "lucide-react";
-
 type Props = {
   onHelp: () => void;
   showBack?: boolean;
@@ -10,32 +8,25 @@ type Props = {
 
 export function AppHeader({ onHelp, showBack, onBack }: Props) {
   return (
-    <header className="flex items-center justify-between py-3">
+    <header className="flex items-center justify-between border-b border-border px-4 py-3">
       {showBack ? (
         <button
           type="button"
           onClick={onBack}
-          className="pressable cursor-pointer text-sm font-medium text-ink hover:text-accent-text"
+          className="pressable cursor-pointer text-sm font-bold text-ink"
         >
-          ← Nova busca
+          ← Voltar
         </button>
       ) : (
-        <span className="text-base font-semibold tracking-tight text-ink">
-          AindaDa
-        </span>
+        <span className="text-sm font-bold text-ink">thescan.<span className="text-accent">food</span></span>
       )}
-      {showBack ? (
-        <span className="text-sm font-semibold text-ink">AindaDa</span>
-      ) : (
-        <button
-          type="button"
-          onClick={onHelp}
-          aria-label="Ajuda e disclaimer"
-          className="pressable flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-muted hover:bg-surface hover:text-ink"
-        >
-          <CircleHelp className="h-5 w-5" strokeWidth={1.75} />
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={onHelp}
+        className="pressable cursor-pointer text-xs text-muted hover:text-ink"
+      >
+        (?) ajuda
+      </button>
     </header>
   );
 }

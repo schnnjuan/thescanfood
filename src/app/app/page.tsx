@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { AindaDaApp } from "@/components/AindaDaApp";
 
 export const metadata: Metadata = {
-  title: "AindaDa — Checar item",
+  title: "thescan.food — Checar item",
   description:
     "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
   openGraph: {
-    title: "AindaDa — Checar item",
+    title: "thescan.food — Checar item",
     description:
       "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
     locale: "pt_BR",

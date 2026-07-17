@@ -1,33 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "AindaDa — Ainda da pra usar?",
+  title: "thescan.food — Ainda da pra usar?",
   description:
     "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
-  metadataBase: new URL("https://aindada.app"),
+  metadataBase: new URL("https://thescan.food"),
   openGraph: {
-    title: "AindaDa — Ainda da pra usar?",
+    title: "thescan.food — Ainda da pra usar?",
     description:
       "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
     locale: "pt_BR",
     type: "website",
-    siteName: "AindaDa",
+    siteName: "thescan.food",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AindaDa — Ainda da pra usar?",
+    title: "thescan.food — Ainda da pra usar?",
     description:
       "Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda da pra usar.",
   },
@@ -41,8 +37,15 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${jetbrainsMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.addEventListener("touchstart",function(e){let t=e.target.closest(".pressable");if(t){t.dataset.pressed="true"}},{passive:true});document.addEventListener("touchend",function(e){let t=e.target.closest(".pressable");if(t){t.dataset.pressed=""}},{passive:true});document.addEventListener("touchcancel",function(e){let t=e.target.closest(".pressable");if(t){t.dataset.pressed=""}},{passive:true});`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-bg text-ink overflow-x-hidden">{children}</body>
     </html>
   );

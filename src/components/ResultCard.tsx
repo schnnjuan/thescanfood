@@ -1,23 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { motion } from "motion/react";
-import { StatusSemaphore } from "@/components/StatusSemaphore";
 import { pickPhrase } from "@/lib/phrases";
-import { springs, distance } from "@/lib/motion-tokens";
 import type { CheckResult } from "@/lib/types";
-
-const softBg: Record<string, string> = {
-  ok: "bg-ok-soft",
-  warn: "bg-warn-soft",
-  bad: "bg-bad-soft",
-};
-
-const textColor: Record<string, string> = {
-  ok: "text-ok",
-  warn: "text-warn",
-  bad: "text-bad",
-};
 
 type Props = {
   result: CheckResult;
@@ -30,9 +15,16 @@ function formatDateBr(iso: string): string {
   return `${d}/${m}/${y}`;
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: distance.lg, scale: 0.96 },
-  visible: { opacity: 1, y: 0, scale: 1 },
+const stripColor: Record<string, string> = {
+  ok: "bg-ok",
+  warn: "bg-warn",
+  bad: "bg-bad",
+};
+
+const phraseColor: Record<string, string> = {
+  ok: "text-ok",
+  warn: "text-warn",
+  bad: "text-bad",
 };
 
 export function ResultCard({ result, openedDate, expiryDate }: Props) {
@@ -50,86 +42,65 @@ export function ResultCard({ result, openedDate, expiryDate }: Props) {
   }
 
   return (
-    <motion.div
-      className="flex flex-col gap-5"
-      aria-live="polite"
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      transition={springs.gentle}
-    >
-      <div className={`flex flex-col items-center rounded-2xl px-6 py-8 text-center ${softBg[result.status]}`}>
-        <StatusSemaphore status={result.status} size="md" />
+    <div className="flex flex-col gap-3">
+      {/* main card */}
+      <div className="relative flex border border-border bg-white">
+        <div className={`w-[3px] shrink-0 ${stripColor[result.status]}`} />
 
-        <p className={`mt-4 text-lg font-bold tracking-tight ${textColor[result.status]}`}>
-          {result.statusLabel}
-        </p>
+        <div className="flex flex-1 flex-col gap-2 px-4 py-4">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-ink uppercase tracking-wider">
+              {result.status === "ok" ? "OK" : result.status === "warn" ? "ATENCAO" : "VENCIDO"}
+            </span>
+            <span className="text-[11px] text-muted">{result.rule.category}</span>
+          </div>
 
-        <p className="mt-2 font-mono text-6xl font-extrabold tabular-nums leading-none text-ink">
-          {result.daysRemaining < 0
-            ? Math.abs(result.daysRemaining)
-            : result.daysRemaining}
-        </p>
-
-        <p className="mt-1 text-sm font-medium text-muted">
-          {result.daysRemaining < 0
-            ? Math.abs(result.daysRemaining) === 1
-              ? "dia vencido"
-              : "dias vencidos"
-            : result.daysRemaining === 0
-              ? "usa hoje"
-              : result.daysRemaining === 1
-                ? "dia restante"
-                : "dias restantes"}
-        </p>
-
-        <p className="mt-3 text-sm text-muted">
-          {dateLine()}
-        </p>
-        <p className="mt-0.5 text-xs text-muted/70">
-          Decisivo: {decidingLabel}
-        </p>
-
-        <div className="mt-5 w-full border-t border-border/50 pt-4">
-          <p className="text-sm font-bold leading-snug text-ink">
-            {phrase}
+          <p className="text-6xl font-extrabold leading-none text-ink">
+            {result.daysRemaining < 0
+              ? Math.abs(result.daysRemaining)
+              : result.daysRemaining}
           </p>
+
+          <p className="text-sm text-muted">
+            {result.daysRemaining < 0
+              ? Math.abs(result.daysRemaining) === 1 ? "dia vencido" : "dias vencidos"
+              : result.daysRemaining === 0
+                ? "usa hoje"
+                : result.daysRemaining === 1
+                  ? "dia restante"
+                  : "dias restantes"}
+          </p>
+
+          <p className="text-xs text-muted">{dateLine()}</p>
+          <p className="text-xs text-muted/50">Decisivo: {decidingLabel}</p>
         </div>
       </div>
 
+      {/* phrase */}
+      <p className={`border border-border bg-white px-4 py-3 text-sm leading-[1.6] font-bold ${phraseColor[result.status]}`}>
+        {phrase}
+      </p>
+
+      {/* tips */}
       {result.rule.tips.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: distance.sm }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...springs.snappy, delay: 0.1 }}
-        >
-          <h2 className="mb-2 text-sm font-semibold text-ink">Dicas</h2>
-          <ul className="flex flex-col gap-2">
-            {result.rule.tips.map((tip, i) => (
-              <motion.li
-                key={tip}
-                initial={{ opacity: 0, x: -distance.sm }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ ...springs.snappy, delay: 0.15 + i * 0.05 }}
-                className="rounded-xl border border-border bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-ink"
-              >
+        <div className="flex flex-col gap-2">
+          <p className="text-[11px] font-bold text-ink">Dicas</p>
+          <ul className="flex flex-col gap-1">
+            {result.rule.tips.map((tip) => (
+              <li key={tip} className="border border-border bg-white px-3 py-2 text-xs text-ink">
                 {tip}
-              </motion.li>
+              </li>
             ))}
           </ul>
-        </motion.div>
+        </div>
       )}
 
+      {/* disclaimer */}
       {(result.rule.category === "medicine" || result.rule.disclaimer) && (
-        <motion.p
-          initial={{ opacity: 0, y: distance.sm }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...springs.snappy, delay: 0.25 }}
-          className="rounded-xl border border-bad/30 bg-bad-soft px-3.5 py-3 text-xs leading-relaxed text-bad-text">
-          {result.rule.disclaimer ??
-            "Não substitui orientação médica ou o rótulo do produto."}
-        </motion.p>
+        <p className="border border-bad bg-bad-soft px-3 py-2 text-xs text-bad">
+          {result.rule.disclaimer ?? "Nao substitui orientacao medica."}
+        </p>
       )}
-    </motion.div>
+    </div>
   );
 }

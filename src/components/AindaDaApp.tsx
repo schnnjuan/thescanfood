@@ -12,7 +12,8 @@ import { ShareCard } from "@/components/ShareCard";
 import { SoftUpsell } from "@/components/SoftUpsell";
 import { SuggestionChips } from "@/components/SuggestionChips";
 import { checkItem, popularItems } from "@/lib/match";
-import { springs, distance } from "@/lib/motion-tokens";
+import { getGame } from "@/lib/game";
+import { pantryCount } from "@/lib/pantry";
 import type { Category, CheckOutcome, ShelfRule } from "@/lib/types";
 
 const CUSTOM_RULES_KEY = "aindada-custom-rules";
@@ -31,12 +32,11 @@ export function AindaDaApp() {
   const [mounted, setMounted] = useState(false);
   const popular = useMemo(() => popularItems(), []);
 
-  // SSR guard: marca como montado pra animacoes so no client
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [scanCount, setScanCount] = useState(0);
+  const [pantryItems, setPantryItems] = useState(0);
 
-  // load custom rules from localStorage on mount
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem(CUSTOM_RULES_KEY);
@@ -44,15 +44,16 @@ export function AindaDaApp() {
     } catch {}
   }, []);
 
+  // Real dynamic stats
+  useEffect(() => {
+    setScanCount(getGame().totalScanned);
+    setPantryItems(pantryCount());
+  }, [screen]);
+
   function runCheck(payload: { query: string; openedDate?: string; expiryDate?: string }) {
     const outcome = checkItem(payload, customRules);
     setCheckCount((c) => c + 1);
-    setScreen({
-      name: "result",
-      outcome,
-      openedDate: payload.openedDate,
-      expiryDate: payload.expiryDate,
-    });
+    setScreen({ name: "result", outcome, openedDate: payload.openedDate, expiryDate: payload.expiryDate });
   }
 
   function handleManualAdd(input: {
@@ -62,7 +63,6 @@ export function AindaDaApp() {
   }) {
     if (screen.name !== "result" || screen.outcome.kind !== "not_found") return;
     const query = screen.outcome.query;
-
     const newRule: ShelfRule = {
       id: `manual-${Date.now()}`,
       names: [query.toLowerCase()],
@@ -71,22 +71,10 @@ export function AindaDaApp() {
       afterOpenDays: input.afterOpenDays,
       tips: input.tips,
     };
-
     const updated = [newRule, ...customRules];
-    try {
-      localStorage.setItem(CUSTOM_RULES_KEY, JSON.stringify(updated));
-    } catch {}
+    try { localStorage.setItem(CUSTOM_RULES_KEY, JSON.stringify(updated)); } catch {}
     setCustomRules(updated);
-
-    // re-check with same dates + new rule
-    const outcome = checkItem(
-      {
-        query,
-        openedDate: screen.openedDate,
-        expiryDate: screen.expiryDate,
-      },
-      updated,
-    );
+    const outcome = checkItem({ query, openedDate: screen.openedDate, expiryDate: screen.expiryDate }, updated);
     setScreen({ name: "result", outcome, openedDate: screen.openedDate, expiryDate: screen.expiryDate });
   }
 
@@ -96,58 +84,66 @@ export function AindaDaApp() {
   }
 
   const showUpsell =
-    checkCount >= 2 &&
-    !upsellDismissed &&
-    screen.name === "result" &&
-    screen.outcome.kind === "hit";
+    checkCount >= 2 && !upsellDismissed && screen.name === "result" && screen.outcome.kind === "hit";
 
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-md flex-col overflow-x-hidden px-4 pb-8 pt-1">
+    <div className="mx-auto flex min-h-full w-full max-w-md flex-col overflow-x-hidden">
       <AppHeader
         onHelp={() => setHelpOpen(true)}
         showBack={screen.name === "result"}
         onBack={() => reset()}
       />
 
+      {/* real stat bar — visible on idle */}
+      {screen.name === "idle" && (
+        <div className="flex items-center gap-3 border-b border-border px-4 py-2.5 text-xs text-muted">
+          <span>{scanCount} itens escaneados</span>
+          <span className="text-border">|</span>
+          <span>{pantryItems} na dispensa</span>
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
         {screen.name === "idle" && (
           <motion.main
             key="idle"
-            className="flex flex-1 flex-col gap-6 pt-6"
-            initial={mounted ? { opacity: 0, y: distance.sm } : false}
+            className="flex flex-1 flex-col px-4 pb-8"
+            initial={mounted ? { opacity: 0, y: 6 } : false}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -distance.sm }}
-            transition={springs.gentle}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
           >
-            <div>
-              <h1 className="text-balance text-3xl font-bold tracking-tight text-ink">
+            <section className="flex flex-col gap-3 pt-6 pb-5">
+              <h1 className="text-3xl font-extrabold leading-[1.1] text-ink">
                 Ainda da pra usar?
               </h1>
-              <p className="mt-2 text-sm text-muted">
-                Comida vencida, cosmetico abandonado, remedio esquecido. Descobre em 3 segundos se ainda presta.
+              <p className="text-sm text-muted">
+                Digita o item. Escolhe a data. Descobre na hora.<br />
+                Sem conta, sem cadastro, sem frescura.
               </p>
+            </section>
+
+            <div className="flex flex-col gap-4">
               <Link
                 href="/app/scan"
-                className="pressable mt-3 flex h-11 items-center justify-center gap-2 rounded-xl border border-dashed border-accent/30 bg-accent-soft text-sm font-medium text-accent-text hover:bg-accent hover:text-white"
+                className="pressable flex h-11 items-center justify-center gap-2 border border-ink bg-white text-sm font-bold text-ink"
               >
-                📸 Escanear código de barras
+                <span className="text-accent text-base leading-none">●</span>
+                Escanear codigo de barras
               </Link>
+
+              <CheckForm
+                key={formKey}
+                initialQuery={screen.prefill}
+                customRules={customRules}
+                onSubmit={runCheck}
+              />
             </div>
 
-            <CheckForm
-              key={formKey}
-              initialQuery={screen.prefill}
-              customRules={customRules}
-              onSubmit={runCheck}
-            />
+            <SuggestionChips items={popular} onPick={(label) => reset(label)} />
 
-            <SuggestionChips
-              items={popular}
-              onPick={(label) => reset(label)}
-            />
-
-            <p className="text-center text-xs text-muted">
-              AindaDa — quando nao tem certeza, cheira. Referencia geral, rotulo e bom senso mandam.
+            <p className="mt-auto pt-6 text-center text-xs text-muted/60">
+              Referencia geral — duvidou? cheira.
             </p>
           </motion.main>
         )}
@@ -155,46 +151,41 @@ export function AindaDaApp() {
         {screen.name === "result" && (
           <motion.main
             key="result"
-            className="flex flex-1 flex-col gap-4 pt-2"
-            initial={mounted ? { opacity: 0, y: distance.lg } : false}
+            className="flex flex-1 flex-col px-4 pb-8"
+            initial={mounted ? { opacity: 0, y: 6 } : false}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -distance.lg }}
-            transition={springs.gentle}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
           >
             {screen.outcome.kind === "hit" ? (
-              <>
+              <div className="flex flex-col gap-3 pt-4">
                 <ResultCard
                   result={screen.outcome}
                   openedDate={screen.openedDate}
                   expiryDate={screen.expiryDate}
                 />
-
                 <ShareCard result={screen.outcome} />
                 <AnimatePresence>
                   {showUpsell && (
                     <motion.div
                       key="upsell"
-                      initial={{ opacity: 0, y: distance.md, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -distance.sm, scale: 0.95 }}
-                      transition={springs.snappy}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.15 }}
                     >
                       <SoftUpsell onDismiss={() => setUpsellDismissed(true)} />
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <motion.button
+                <button
                   type="button"
                   onClick={() => reset()}
-                  className="pressable h-11 w-full cursor-pointer text-sm font-medium text-muted hover:text-ink"
-                  initial={{ opacity: 0, y: distance.sm }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ ...springs.snappy, delay: 0.15 }}
-                  whileTap={{ scale: 0.97 }}
+                  className="pressable mt-1 h-11 border border-ink bg-white text-sm font-bold text-ink"
                 >
                   Checar outro item
-                </motion.button>
-              </>
+                </button>
+              </div>
             ) : (
               <NotFound
                 query={screen.outcome.query}

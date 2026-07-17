@@ -3,7 +3,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { searchItems } from "@/lib/match";
-import { springs, distance } from "@/lib/motion-tokens";
 import type { Category, ShelfRule } from "@/lib/types";
 
 type Props = {
@@ -24,14 +23,6 @@ const CATEGORY_LABEL: Record<Category, string> = {
   medicine: "farmacia",
   cleaning: "limpeza",
   other: "outro",
-};
-
-const modeHintsInfinite: Record<Category, string> = {
-  food: "",
-  cosmetic: "Dica: cosmetico geralmente usa data de abertura",
-  medicine: "Dica: remedio sempre usa validade",
-  cleaning: "",
-  other: "",
 };
 
 const openPresets = [
@@ -61,13 +52,8 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    if (!query.trim()) {
-      setHits([]);
-      return;
-    }
-    const t = setTimeout(() => {
-      setHits(searchItems(query, 6, customRules));
-    }, 150);
+    if (!query.trim()) { setHits([]); return; }
+    const t = setTimeout(() => { setHits(searchItems(query, 6, customRules)); }, 150);
     return () => clearTimeout(t);
   }, [query, customRules]);
 
@@ -84,22 +70,17 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
     if (!q) return;
     if (!openedDate && !expiryDate) return;
     setOpenList(false);
-    onSubmit({
-      query: q,
-      openedDate: openedDate || undefined,
-      expiryDate: expiryDate || undefined,
-    });
+    onSubmit({ query: q, openedDate: openedDate || undefined, expiryDate: expiryDate || undefined });
   }
 
   const now = new Date();
   const canSubmit = query.trim() && (openedDate || expiryDate);
-  const hint = pickedCategory ? modeHintsInfinite[pickedCategory] : null;
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {/* item */}
-      <div className="relative flex flex-col gap-1.5">
-        <label htmlFor={itemId} className="text-sm font-medium text-ink">
+      <div className="relative flex flex-col gap-1">
+        <label htmlFor={itemId} className="text-[11px] font-bold text-ink">
           O que e?
         </label>
         <input
@@ -107,43 +88,34 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
           type="text"
           autoComplete="off"
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setOpenList(true);
-          }}
+          onChange={(e) => { setQuery(e.target.value); setOpenList(true); }}
           onFocus={() => setOpenList(true)}
           onBlur={() => setTimeout(() => setOpenList(false), 120)}
           placeholder="Ex: ketchup, rimel, dipirona..."
-          className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-11 w-full border border-border bg-white px-3 text-sm text-ink outline-none placeholder:text-muted/50"
         />
-        {hint && !openList && (
-          <p className="text-xs text-muted">{hint}</p>
-        )}
         <AnimatePresence>
           {openList && hits.length > 0 && (
             <motion.ul
               ref={listRef}
-              className="absolute top-full z-20 mt-1 max-h-56 w-full origin-top overflow-auto rounded-xl border border-border bg-surface shadow-sm"
+              className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-auto border border-border bg-white"
               role="listbox"
-              initial={{ opacity: 0, y: -distance.sm, scaleY: 0.95 }}
-              animate={{ opacity: 1, y: 0, scaleY: 1 }}
-              exit={{ opacity: 0, y: -distance.sm, scaleY: 0.95 }}
-              transition={springs.snappy}
-              style={{ transformOrigin: "top" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
             >
               {hits.map((rule) => (
                 <li key={rule.id}>
                   <button
                     type="button"
                     role="option"
-                    className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm hover:bg-accent-soft"
+                    className="flex w-full cursor-pointer items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-accent-soft"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => pick(rule)}
                   >
-                    <span className="font-medium text-ink">{rule.label}</span>
-                    <span className="text-xs text-muted">
-                      {CATEGORY_LABEL[rule.category]}
-                    </span>
+                    <span className="font-bold text-ink">{rule.label}</span>
+                    <span className="text-xs text-muted">{CATEGORY_LABEL[rule.category]}</span>
                   </button>
                 </li>
               ))}
@@ -153,27 +125,27 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
       </div>
 
       {/* data de abertura */}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={openId} className="text-sm font-medium text-ink">
-          Data de abertura <span className="text-xs text-muted">(opcional)</span>
+      <div className="flex flex-col gap-1">
+        <label htmlFor={openId} className="text-[11px] font-bold text-ink">
+          Data de abertura <span className="font-normal text-muted">(opcional)</span>
         </label>
         <input
           id={openId}
           type="date"
           value={openedDate}
           onChange={(e) => setOpenedDate(e.target.value)}
-          className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-11 w-full border border-border bg-white px-3 text-sm text-ink"
         />
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-4 gap-1">
           {openPresets.map((p) => (
             <button
               key={p.label}
               type="button"
               onClick={() => setOpenedDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
-              className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
+              className={`pressable h-8 text-xs font-bold ${
                 openedDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
-                  ? "bg-ink text-cta-on"
-                  : "border border-border bg-surface text-muted"
+                  ? "bg-ink text-white"
+                  : "border border-border bg-white text-ink"
               }`}
             >
               {p.label}
@@ -183,27 +155,27 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
       </div>
 
       {/* validade */}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={expId} className="text-sm font-medium text-ink">
-          Validade <span className="text-xs text-muted">(opcional)</span>
+      <div className="flex flex-col gap-1">
+        <label htmlFor={expId} className="text-[11px] font-bold text-ink">
+          Validade <span className="font-normal text-muted">(opcional)</span>
         </label>
         <input
           id={expId}
           type="date"
           value={expiryDate}
           onChange={(e) => setExpiryDate(e.target.value)}
-          className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          className="h-11 w-full border border-border bg-white px-3 text-sm text-ink"
         />
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-4 gap-1">
           {expiryPresets.map((p) => (
             <button
               key={p.label}
               type="button"
               onClick={() => setExpiryDate(iso(new Date(now.getTime() + p.offset * DAY_MS)))}
-              className={`pressable h-8 w-full cursor-pointer rounded-lg px-1 text-xs font-medium ${
+              className={`pressable h-8 text-xs font-bold ${
                 expiryDate === iso(new Date(now.getTime() + p.offset * DAY_MS))
-                  ? "bg-ink text-cta-on"
-                  : "border border-border bg-surface text-muted"
+                  ? "bg-ink text-white"
+                  : "border border-border bg-white text-ink"
               }`}
             >
               {p.label}
@@ -214,7 +186,7 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
 
       <button
         type="submit"
-        className="pressable h-12 w-full cursor-pointer rounded-xl bg-cta text-base font-semibold text-cta-on hover:opacity-90 disabled:opacity-40"
+        className="pressable mt-1 h-11 border border-ink bg-ink text-sm font-bold text-white disabled:opacity-40"
         disabled={!canSubmit}
       >
         Checar se ainda da
