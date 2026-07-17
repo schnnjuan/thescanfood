@@ -1,6 +1,8 @@
 "use client";
 
 import { AlertTriangle, Check, X } from "lucide-react";
+import { motion } from "motion/react";
+import { springs } from "@/lib/motion-tokens";
 import type { Status } from "@/lib/types";
 
 type Props = {
@@ -35,28 +37,36 @@ export function StatusSemaphore({ status, size = "md" }: Props) {
         const active = light === status;
         const IconComp = c.icon;
         return (
-          <div
+          <motion.div
             key={light}
-            className="flex items-center justify-center rounded-full transition-all duration-300"
-            style={{
-              width: s.light,
-              height: s.light,
+            className="flex items-center justify-center rounded-full"
+            animate={{
               background: active ? c.fill : c.dim,
               opacity: active ? 1 : 0.3,
+              scale: active ? 1 : 0.85,
               boxShadow: active
                 ? `0 0 8px ${c.fill}30, 0 0 16px ${c.fill}15`
-                : "none",
+                : "0px 0px 0px rgba(0,0,0,0)",
             }}
+            transition={springs.bouncy}
+            style={{ width: s.light, height: s.light }}
           >
             {active && (
-              <IconComp
-                size={s.icon}
-                strokeWidth={2.5}
-                color="white"
-                aria-hidden
-              />
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={springs.snappy}
+              >
+                <IconComp
+                  size={s.icon}
+                  strokeWidth={2.5}
+                  color="white"
+                  aria-hidden
+                />
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         );
       })}
     </div>

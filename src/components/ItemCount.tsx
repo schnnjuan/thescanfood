@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 
 const CUSTOM_RULES_KEY = "aindada-custom-rules";
 
@@ -10,6 +11,7 @@ type Props = {
 
 export function ItemCount({ staticCount }: Props) {
   const [total, setTotal] = useState(staticCount);
+  const prevTotal = useRef(staticCount);
 
   useEffect(() => {
     try {
@@ -23,5 +25,18 @@ export function ItemCount({ staticCount }: Props) {
     }
   }, [staticCount]);
 
-  return <span>{total.toLocaleString("pt-BR")} itens na base</span>;
+  const motionValue = useMotionValue(prevTotal.current);
+  const springValue = useSpring(motionValue, { stiffness: 80, damping: 20 });
+  const rounded = useTransform(springValue, (v) => Math.round(v));
+
+  useEffect(() => {
+    motionValue.set(total);
+    prevTotal.current = total;
+  }, [total, motionValue]);
+
+  return (
+    <motion.span>
+      <motion.span key={total}>{rounded}</motion.span> itens na base
+    </motion.span>
+  );
 }

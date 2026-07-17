@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { springs, distance } from "@/lib/motion-tokens";
 import type { Category, ShelfRule } from "@/lib/types";
 
 const CATEGORIES: { value: Category; label: string }[] = [
@@ -75,85 +77,97 @@ export function NotFound({
         </div>
       )}
 
-      {!showManual ? (
-        <button
-          type="button"
-          onClick={() => setShowManual(true)}
-          className="pressable motion-safe:animate-fadeInUp delay-2 h-11 w-full cursor-pointer rounded-xl border border-dashed border-border bg-surface text-sm font-medium text-accent hover:bg-accent-soft"
-        >
-          + Adicionar manualmente
-        </button>
-      ) : (
-        <form
-          onSubmit={handleSubmit}
-          className="motion-safe:animate-fadeInUp delay-2 flex flex-col gap-4 rounded-2xl border border-border bg-surface px-5 py-5"
-        >
-          <p className="text-sm font-semibold text-ink">
-            Adicionar &quot;{query}&quot;
-          </p>
+      <AnimatePresence mode="wait">
+        {!showManual ? (
+          <motion.button
+            key="manual-btn"
+            type="button"
+            onClick={() => setShowManual(true)}
+            className="pressable h-11 w-full cursor-pointer rounded-xl border border-dashed border-border bg-surface text-sm font-medium text-accent hover:bg-accent-soft"
+            initial={{ opacity: 0, y: distance.sm }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -distance.sm }}
+            transition={springs.snappy}
+          >
+            + Adicionar manualmente
+          </motion.button>
+        ) : (
+          <motion.form
+            key="manual-form"
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 rounded-2xl border border-border bg-surface px-5 py-5"
+            initial={{ opacity: 0, y: distance.md, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -distance.sm, scale: 0.97 }}
+            transition={springs.gentle}
+          >
+            <p className="text-sm font-semibold text-ink">
+              Adicionar &quot;{query}&quot;
+            </p>
 
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => (
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.value}
+                  type="button"
+                  onClick={() => setCat(c.value)}
+                  className={`pressable h-8 cursor-pointer rounded-lg px-3 text-xs font-medium ${
+                    cat === c.value
+                      ? "bg-ink text-cta-on"
+                      : "border border-border bg-surface text-muted"
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted">
+                Dias apos abrir
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+                placeholder="ex: 7"
+                className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted">
+                Dicas (opcional, uma por linha)
+              </label>
+              <textarea
+                value={tipsText}
+                onChange={(e) => setTipsText(e.target.value)}
+                placeholder="ex: Guardar na geladeira"
+                rows={3}
+                className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-base text-ink outline-none placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/20"
+              />
+            </div>
+
+            <div className="flex gap-2">
               <button
-                key={c.value}
-                type="button"
-                onClick={() => setCat(c.value)}
-                className={`pressable h-8 cursor-pointer rounded-lg px-3 text-xs font-medium ${
-                  cat === c.value
-                    ? "bg-ink text-cta-on"
-                    : "border border-border bg-surface text-muted"
-                }`}
+                type="submit"
+                className="pressable h-11 flex-1 cursor-pointer rounded-xl bg-cta text-sm font-semibold text-cta-on disabled:opacity-40"
+                disabled={!days || parseInt(days) < 1}
               >
-                {c.label}
+                Adicionar e checar
               </button>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-muted">
-              Dias apos abrir
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={days}
-              onChange={(e) => setDays(e.target.value)}
-              placeholder="ex: 7"
-              className="h-11 w-full rounded-xl border border-border bg-surface px-4 text-base text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-muted">
-              Dicas (opcional, uma por linha)
-            </label>
-            <textarea
-              value={tipsText}
-              onChange={(e) => setTipsText(e.target.value)}
-              placeholder="ex: Guardar na geladeira"
-              rows={3}
-              className="w-full resize-none rounded-xl border border-border bg-surface px-4 py-3 text-base text-ink outline-none placeholder:text-muted/70 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              className="pressable h-11 flex-1 cursor-pointer rounded-xl bg-cta text-sm font-semibold text-cta-on disabled:opacity-40"
-              disabled={!days || parseInt(days) < 1}
-            >
-              Adicionar e checar
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowManual(false)}
-              className="pressable h-11 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-medium text-muted hover:text-ink"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      )}
+              <button
+                type="button"
+                onClick={() => setShowManual(false)}
+                className="pressable h-11 cursor-pointer rounded-xl border border-border bg-surface px-4 text-sm font-medium text-muted hover:text-ink"
+              >
+                Cancelar
+              </button>
+            </div>
+          </motion.form>
+        )}
+      </AnimatePresence>
 
       <button
         type="button"

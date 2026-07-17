@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "motion/react";
 import seed from "@/data/seed.json";
 import { ItemCount } from "@/components/ItemCount";
+import { springs, scale as scaleVal } from "@/lib/motion-tokens";
 
 const STATIC_COUNT = seed.length;
 
@@ -89,10 +93,16 @@ export function LandingPage() {
           <h2 className="text-lg font-bold text-ink">O que da pra checar</h2>
           <div className="grid grid-cols-2 gap-3">
             {categories.map((cat) => (
-              <div key={cat.label} className="rounded-xl border border-border bg-surface px-4 py-4">
+              <motion.div
+                key={cat.label}
+                className="rounded-xl border border-border bg-surface px-4 py-4"
+                whileHover={{ scale: scaleVal.pop, borderColor: "#4f46e5" }}
+                whileTap={{ scale: scaleVal.press }}
+                transition={springs.snappy}
+              >
                 <p className="font-semibold text-ink">{cat.label}</p>
                 <p className="mt-1 text-xs text-muted">{cat.examples}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>

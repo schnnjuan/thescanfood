@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { searchItems } from "@/lib/match";
+import { springs, distance } from "@/lib/motion-tokens";
 import type { Category, ShelfRule } from "@/lib/types";
 
 type Props = {
@@ -117,30 +119,37 @@ export function CheckForm({ onSubmit, initialQuery = "", customRules = [] }: Pro
         {hint && !openList && (
           <p className="text-xs text-muted">{hint}</p>
         )}
-        {openList && hits.length > 0 && (
-          <ul
-            ref={listRef}
-            className="absolute top-full z-20 mt-1 max-h-56 w-full origin-top overflow-auto rounded-xl border border-border bg-surface shadow-sm motion-safe:animate-pop"
-            role="listbox"
-          >
-            {hits.map((rule) => (
-              <li key={rule.id}>
-                <button
-                  type="button"
-                  role="option"
-                  className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm hover:bg-accent-soft"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => pick(rule)}
-                >
-                  <span className="font-medium text-ink">{rule.label}</span>
-                  <span className="text-xs text-muted">
-                    {CATEGORY_LABEL[rule.category]}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AnimatePresence>
+          {openList && hits.length > 0 && (
+            <motion.ul
+              ref={listRef}
+              className="absolute top-full z-20 mt-1 max-h-56 w-full origin-top overflow-auto rounded-xl border border-border bg-surface shadow-sm"
+              role="listbox"
+              initial={{ opacity: 0, y: -distance.sm, scaleY: 0.95 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -distance.sm, scaleY: 0.95 }}
+              transition={springs.snappy}
+              style={{ transformOrigin: "top" }}
+            >
+              {hits.map((rule) => (
+                <li key={rule.id}>
+                  <button
+                    type="button"
+                    role="option"
+                    className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm hover:bg-accent-soft"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => pick(rule)}
+                  >
+                    <span className="font-medium text-ink">{rule.label}</span>
+                    <span className="text-xs text-muted">
+                      {CATEGORY_LABEL[rule.category]}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* data de abertura */}

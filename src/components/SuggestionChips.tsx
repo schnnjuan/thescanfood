@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "motion/react";
+import { springs, scale as scaleVal } from "@/lib/motion-tokens";
 import type { ShelfRule } from "@/lib/types";
 
 type Props = {
@@ -13,14 +15,17 @@ export function SuggestionChips({ items, onPick }: Props) {
       <p className="text-sm font-medium text-muted">Mais buscados</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
-          <button
+          <motion.button
             key={item.id}
             type="button"
             onClick={() => onPick(item.label)}
-            className="h-10 cursor-pointer rounded-full border border-border bg-surface px-3.5 text-sm font-medium text-ink transition-colors hover:border-accent hover:bg-accent-soft motion-safe:active:animate-press"
+            className="h-10 cursor-pointer rounded-full border border-border bg-surface px-3.5 text-sm font-medium text-ink transition-colors hover:border-accent hover:bg-accent-soft"
+            whileHover={{ scale: scaleVal.pop, borderColor: "#4f46e5" }}
+            whileTap={{ scale: scaleVal.press }}
+            transition={springs.snappy}
           >
             {item.label}
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>
