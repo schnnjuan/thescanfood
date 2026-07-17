@@ -10,8 +10,7 @@
       "Guarda na geladeira depois de aberto",
       "Se cheiro ou cor estranha, descarta",
       "Evita deixar na porta da geladeira (oscila temperatura)"
-    ],
-    "sources": ["USDA general guidance"]
+    ]
   },
   {
     "id": "maionese",
@@ -24,6 +23,18 @@
       "Sempre na geladeira após abrir",
       "Se separar ou cheirar azedo, joga fora",
       "Não deixe horas fora da geladeira"
+    ]
+  },
+  {
+    "id": "mostarda",
+    "names": ["mostarda", "mustard"],
+    "label": "Mostarda",
+    "category": "food",
+    "afterOpenDays": 60,
+    "fridgeRequired": true,
+    "tips": [
+      "Geladeira após abrir",
+      "Ácido ajuda a durar, mas cheiro off = fora"
     ]
   },
   {
@@ -44,12 +55,363 @@
     "names": ["iogurte", "yogurt", "iogurte natural"],
     "label": "Iogurte",
     "category": "food",
+    "afterOpenDays": 14,
+    "fridgeRequired": true,
+    "tips": [
+      "Usa em até ~7–14 dias após abrir",
+      "Mofo ou cheiro off = fora",
+      "Não recoloque colher suja no pote"
+    ]
+  },
+  {
+    "id": "queijo-fatiado",
+    "names": ["queijo fatiado", "queijo prato", "queijo mussarela fatiado", "queijo"],
+    "label": "Queijo fatiado",
+    "category": "food",
     "afterOpenDays": 7,
     "fridgeRequired": true,
     "tips": [
-      "Usa em até ~7 dias após abrir",
-      "Mofo ou cheiro off = fora",
-      "Não recoloque colher suja no pote"
+      "5–7 dias após abrir a embalagem",
+      "Mofo = descarta inteiro (micélio invisível)",
+      "Guarda no fundo da geladeira, não na porta"
+    ]
+  },
+  {
+    "id": "ovos",
+    "names": ["ovo", "ovos", "eggs"],
+    "label": "Ovos",
+    "category": "food",
+    "afterOpenDays": 28,
+    "fridgeRequired": true,
+    "tips": [
+      "Na geladeira, várias semanas se intactos",
+      "Não lave a casca antes de guardar",
+      "Teste na água: flutua = desconfie"
+    ]
+  },
+  {
+    "id": "pao-de-forma",
+    "names": ["pão de forma", "pao de forma", "pão", "pao", "pão fatiado"],
+    "label": "Pão de forma",
+    "category": "food",
+    "afterOpenDays": 5,
+    "fridgeRequired": false,
+    "tips": [
+      "5–7 dias em local seco; congelar estende",
+      "Mofo em uma fatia = descarte o pacote",
+      "Geladeira resseca — melhor congelar"
+    ]
+  },
+  {
+    "id": "manteiga",
+    "names": ["manteiga", "butter"],
+    "label": "Manteiga",
+    "category": "food",
+    "afterOpenDays": 90,
+    "fridgeRequired": true,
+    "tips": [
+      "1–3 meses na geladeira após abrir",
+      "Pode congelar por até 6 meses",
+      "Fora da geladeira amolece mas oxida mais rápido"
+    ]
+  },
+  {
+    "id": "ovos-cozidos",
+    "names": ["ovo cozido", "ovos cozidos", "ovo cozido na geladeira"],
+    "label": "Ovos cozidos",
+    "category": "food",
+    "afterOpenDays": 7,
+    "fridgeRequired": true,
+    "tips": [
+      "Até 1 semana na geladeira com casca",
+      "Descascados: consome em 2 dias",
+      "Cheiro sulfúrico forte = descarta"
+    ]
+  },
+  {
+    "id": "suco",
+    "names": ["suco", "suco de laranja", "suco aberto", "suco de caixinha"],
+    "label": "Suco de caixinha",
+    "category": "food",
+    "afterOpenDays": 7,
+    "fridgeRequired": true,
+    "tips": [
+      "7–10 dias na geladeira após abrir",
+      "Fermentou (gás/azedo) = descarta",
+      "Não beba direto da caixa (contamina)"
+    ]
+  },
+  {
+    "id": "cafe-moido",
+    "names": ["café moído", "café", "café em pó"],
+    "label": "Café moído",
+    "category": "food",
+    "afterOpenDays": 21,
+    "fridgeRequired": false,
+    "tips": [
+      "2–4 semanas após abrir (perde aroma)",
+      "Guarda em pote hermético, longe do sol",
+      "Geladeira pode condensar e estragar"
+    ]
+  },
+  {
+    "id": "arroz-cozido",
+    "names": ["arroz cozido", "arroz", "arroz pronto"],
+    "label": "Arroz cozido",
+    "category": "food",
+    "afterOpenDays": 3,
+    "fridgeRequired": true,
+    "tips": [
+      "3–4 dias na geladeira",
+      "Reaqueça bem antes de comer",
+      "Cheiro azedo ou textura viscosa = descarta"
+    ]
+  },
+  {
+    "id": "feijao-cozido",
+    "names": ["feijão", "feijão cozido", "feijoada", "feijao cozido"],
+    "label": "Feijão cozido",
+    "category": "food",
+    "afterOpenDays": 4,
+    "fridgeRequired": true,
+    "tips": [
+      "3–4 dias na geladeira",
+      "Pode congelar por até 3 meses",
+      "Azedou ou formou espuma = descarta"
+    ]
+  },
+  {
+    "id": "carne-moida",
+    "names": ["carne moída", "carne moida", "carne crua"],
+    "label": "Carne moída crua",
+    "category": "food",
+    "afterOpenDays": 2,
+    "fridgeRequired": true,
+    "tips": [
+      "1–2 dias na geladeira (crua)",
+      "Congela por 3–4 meses",
+      "Cheiro azedo ou cor acinzentada = descarta"
+    ]
+  },
+  {
+    "id": "frango-cru",
+    "names": ["frango", "frango cru", "peito de frango", "sobrecoxa"],
+    "label": "Frango cru",
+    "category": "food",
+    "afterOpenDays": 2,
+    "fridgeRequired": true,
+    "tips": [
+      "1–2 dias na geladeira (cru)",
+      "Congela por até 9 meses",
+      "Cheiro forte ou textura pegajosa = descarta"
+    ]
+  },
+  {
+    "id": "peixe-cru",
+    "names": ["peixe", "peixe cru", "filé de peixe", "salmao"],
+    "label": "Peixe cru",
+    "category": "food",
+    "afterOpenDays": 1,
+    "fridgeRequired": true,
+    "tips": [
+      "1–2 dias na geladeira (cru)",
+      "Cheiro de amônia = descarta",
+      "Prefere preparar no dia da compra"
+    ]
+  },
+  {
+    "id": "sobras",
+    "names": ["sobras", "restos", "comida pronta", "marmita", "sobra de comida"],
+    "label": "Sobras de refeição",
+    "category": "food",
+    "afterOpenDays": 3,
+    "fridgeRequired": true,
+    "tips": [
+      "3–4 dias na geladeira",
+      "Reaqueça uma vez só (não esfria e esquenta de novo)",
+      "Se ficou >2h fora da geladeira, descarta"
+    ]
+  },
+  {
+    "id": "molho-tomate",
+    "names": ["molho de tomate", "molho de tomate aberto", "pomodoro"],
+    "label": "Molho de tomate",
+    "category": "food",
+    "afterOpenDays": 7,
+    "fridgeRequired": true,
+    "tips": [
+      "5–7 dias na geladeira após abrir",
+      "Mofo na superfície = descarta",
+      "Pode congelar em porções"
+    ]
+  },
+  {
+    "id": "presunto",
+    "names": ["presunto", "presunto fatiado"],
+    "label": "Presunto fatiado",
+    "category": "food",
+    "afterOpenDays": 5,
+    "fridgeRequired": true,
+    "tips": [
+      "3–5 dias na geladeira após abrir",
+      "Camada pegajosa ou cheiro azedo = descarta",
+      "Embala bem pra não ressecar"
+    ]
+  },
+  {
+    "id": "salame",
+    "names": ["salame", "salaminho"],
+    "label": "Salame",
+    "category": "food",
+    "afterOpenDays": 21,
+    "fridgeRequired": true,
+    "tips": [
+      "2–3 semanas na geladeira após fatiar",
+      "Mofo superficial dá pra limpar (peça inteira)",
+      "Fatias prontas duram menos"
+    ]
+  },
+  {
+    "id": "requeijao",
+    "names": ["requeijão", "requeijao", "cream cheese"],
+    "label": "Requeijão",
+    "category": "food",
+    "afterOpenDays": 14,
+    "fridgeRequired": true,
+    "tips": [
+      "Até 2 semanas na geladeira após abrir",
+      "Mofo = descarta",
+      "Não volte colher suja no pote"
+    ]
+  },
+  {
+    "id": "leite-condensado",
+    "names": ["leite condensado", "leite condensado aberto"],
+    "label": "Leite condensado",
+    "category": "food",
+    "afterOpenDays": 21,
+    "fridgeRequired": true,
+    "tips": [
+      "Guarda na geladeira após abrir",
+      "Transferir pra pote de vidro dura mais",
+      "Caramelo ou cheiro estranho = descarta"
+    ]
+  },
+  {
+    "id": "creme-de-leite",
+    "names": ["creme de leite", "creme de leite fresco", "nata"],
+    "label": "Creme de leite",
+    "category": "food",
+    "afterOpenDays": 7,
+    "fridgeRequired": true,
+    "tips": [
+      "5–7 dias na geladeira após abrir",
+      "Talhou? Se cheiro normal, ainda dá pra bater",
+      "Cheiro azedo = descarta"
+    ]
+  },
+  {
+    "id": "geleia",
+    "names": ["geleia", "geléia", "compota"],
+    "label": "Geleia",
+    "category": "food",
+    "afterOpenDays": 180,
+    "fridgeRequired": true,
+    "tips": [
+      "Meses na geladeira (açúcar conserva)",
+      "Mofo = descarta (micotoxina)",
+      "Sempre usa colher limpa"
+    ]
+  },
+  {
+    "id": "mel",
+    "names": ["mel", "mel puro"],
+    "label": "Mel",
+    "category": "food",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "Praticamente não estraga (milhares de anos)",
+      "Cristalizou? Banho-maria volta ao normal",
+      "Não dá mel pra bebê <1 ano"
+    ]
+  },
+  {
+    "id": "azeite",
+    "names": ["azeite", "azeite de oliva", "olive oil", "azeite extra virgem"],
+    "label": "Azeite de oliva",
+    "category": "food",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "Guarda longe da luz e do calor",
+      "Não na geladeira (condensa e perde sabor)",
+      "Ranço (cheiro de tinta/ massa) = descarta"
+    ]
+  },
+  {
+    "id": "vinagre",
+    "names": ["vinagre", "vinagre de álcool", "vinagre de maçã"],
+    "label": "Vinagre",
+    "category": "food",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "Praticamente não vence (ácido conserva)",
+      "Turvo ou com sedimento = normal",
+      "Mofo = contaminação, descarta"
+    ]
+  },
+  {
+    "id": "shoyu",
+    "names": ["shoyu", "molho shoyu", "molho de soja", "soy sauce"],
+    "label": "Shoyu",
+    "category": "food",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "Geladeira prolonga o sabor",
+      "Fora da geladeira também dura bem",
+      "Precipitado é normal (proteína)"
+    ]
+  },
+  {
+    "id": "manteiga-amendoim",
+    "names": ["manteiga de amendoim", "pasta de amendoim", "peanut butter"],
+    "label": "Manteiga de amendoim",
+    "category": "food",
+    "afterOpenDays": 90,
+    "fridgeRequired": false,
+    "tips": [
+      "3 meses fora, 6 meses geladeira",
+      "Óleo separado = mistura normal",
+      "Cheiro rançoso = descarta"
+    ]
+  },
+  {
+    "id": "molho-pesto",
+    "names": ["pesto", "molho pesto"],
+    "label": "Molho pesto",
+    "category": "food",
+    "afterOpenDays": 7,
+    "fridgeRequired": true,
+    "tips": [
+      "5–7 dias na geladeira após abrir",
+      "Cubra com azeite pra conservar",
+      "Mofo = descarta"
+    ]
+  },
+  {
+    "id": "batata-cozida",
+    "names": ["batata", "batata cozida", "batata inglesa cozida", "purê de batata"],
+    "label": "Batata cozida",
+    "category": "food",
+    "afterOpenDays": 4,
+    "fridgeRequired": true,
+    "tips": [
+      "3–4 dias na geladeira",
+      "Purê congela bem por 2 meses",
+      "Batata com mofo ou textura borrachenta = descarta"
     ]
   },
   {
@@ -63,8 +425,7 @@
       "Troca a cada 3 meses (risco de infecção ocular)",
       "Não compartilhe com outras pessoas",
       "Se ressecar ou cheirar mal, descarta"
-    ],
-    "sources": ["PAO comum 3M–6M em rótulos"]
+    ]
   },
   {
     "id": "protetor-solar",
@@ -93,6 +454,162 @@
     ]
   },
   {
+    "id": "serum-vitamina-c",
+    "names": ["sérum vitamina c", "serum vitamina c", "vitamina c facial", "sérum facial"],
+    "label": "Sérum vitamina C",
+    "category": "cosmetic",
+    "afterOpenDays": 180,
+    "fridgeRequired": false,
+    "tips": [
+      "3–6 meses (oxida rápido)",
+      "Amarelo escuro ou marrom = oxidado, perde eficácia",
+      "Geladeira prolonga a vida"
+    ]
+  },
+  {
+    "id": "creme-hidratante",
+    "names": ["creme hidratante", "hidratante facial", "hidratante"],
+    "label": "Creme hidratante",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "6–12 meses após abrir",
+      "Separou ou cheiro diferente = descarta",
+      "Não coloque os dedos sujos no pote"
+    ]
+  },
+  {
+    "id": "batom",
+    "names": ["batom", "lipstick"],
+    "label": "Batom",
+    "category": "cosmetic",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "12–24 meses (base de cera dura mais)",
+      "Bolinhas ou textura grudenta = troca",
+      "Nunca compartilhe se tiver herpes"
+    ]
+  },
+  {
+    "id": "delineador-liquido",
+    "names": ["delineador", "delineador líquido", "eyeliner"],
+    "label": "Delineador líquido",
+    "category": "cosmetic",
+    "afterOpenDays": 90,
+    "fridgeRequired": false,
+    "tips": [
+      "3–6 meses (risco de infecção ocular)",
+      "Ressecou ou gruda = descarta",
+      "Não compartilhe"
+    ]
+  },
+  {
+    "id": "esmalte",
+    "names": ["esmalte", "esmalte de unhas", "nail polish"],
+    "label": "Esmalte",
+    "category": "cosmetic",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2+ anos se bem fechado",
+      "Grossou ou gruda = thinner recupera",
+      "Cheiro de tinta muito forte = secou, descarta"
+    ]
+  },
+  {
+    "id": "shampoo",
+    "names": ["shampoo", "xampu", "shampoo aberto"],
+    "label": "Shampoo",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "12 meses (PAO comum)",
+      "Separado ou cheiro estranho = descarta",
+      "Não complete com água (contamina)"
+    ]
+  },
+  {
+    "id": "condicionador",
+    "names": ["condicionador", "creme de cabelo", "condicionador aberto"],
+    "label": "Condicionador",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "6–12 meses após abrir",
+      "Textura aguada ou cheiro off = descarta",
+      "Mantém longe do calor do banheiro"
+    ]
+  },
+  {
+    "id": "desodorante",
+    "names": ["desodorante", "antitranspirante", "aerosol", "desodorante spray"],
+    "label": "Desodorante",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "12–36 meses dependendo da fórmula",
+      "Cheiro alterado = descarta",
+      "Aerosol vazio leva pra reciclagem"
+    ]
+  },
+  {
+    "id": "perfume",
+    "names": ["perfume", "colônia", "desodorante perfumado"],
+    "label": "Perfume",
+    "category": "cosmetic",
+    "afterOpenDays": 1095,
+    "fridgeRequired": false,
+    "tips": [
+      "3–5 anos se bem armazenado",
+      "Longe de luz direta e calor",
+      "Mudou de cor ou cheiro a álcool = oxidou"
+    ]
+  },
+  {
+    "id": "hidratante-corporal",
+    "names": ["hidratante corporal", "loção hidratante", "body lotion"],
+    "label": "Hidratante corporal",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "12 meses após abrir",
+      "Separou ou cheiro azedo = descarta",
+      "Bomba é mais higiênica que pote"
+    ]
+  },
+  {
+    "id": "pasta-dente",
+    "names": ["pasta de dente", "creme dental", "dentifrício"],
+    "label": "Pasta de dente",
+    "category": "cosmetic",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2 anos (data de validade)", 
+      "Ressecou ou mudou cor = troca",
+      "Não compartilhe o tubo"
+    ]
+  },
+  {
+    "id": "enxaguante-bucal",
+    "names": ["enxaguante bucal", "mouthwash", "listerine"],
+    "label": "Enxaguante bucal",
+    "category": "cosmetic",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "12 meses após abrir",
+      "Turvo ou cheiro alterado = descarta",
+      "Não beba (óbvio)"
+    ]
+  },
+  {
     "id": "agua-sanitaria",
     "names": ["água sanitária", "agua sanitaria", "cloro", "bleach"],
     "label": "Água sanitária",
@@ -106,20 +623,138 @@
     ]
   },
   {
-    "id": "mostarda",
-    "names": ["mostarda", "mustard"],
-    "label": "Mostarda",
-    "category": "food",
-    "afterOpenDays": 60,
-    "fridgeRequired": true,
+    "id": "detergente",
+    "names": ["detergente", "detergente líquido", "detergente de louça"],
+    "label": "Detergente",
+    "category": "cleaning",
+    "afterOpenDays": 1095,
+    "fridgeRequired": false,
     "tips": [
-      "Geladeira após abrir",
-      "Ácido ajuda a durar, mas cheiro off = fora"
+      "Estável por anos",
+      "Mais consistente que líquido = ainda funciona",
+      "Não precisa de geladeira"
+    ]
+  },
+  {
+    "id": "alcool-70",
+    "names": ["álcool 70", "alcool 70", "álcool", "alcool", "álcool etílico"],
+    "label": "Álcool 70%",
+    "category": "cleaning",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "1–2 anos (evaporação reduz eficácia)",
+      "Frasco bem fechado dura mais",
+      "Menos de 70% não desinfeta bem"
+    ]
+  },
+  {
+    "id": "alcool-gel",
+    "names": ["álcool em gel", "alcool em gel", "álcool gel", "alcool gel"],
+    "label": "Álcool em gel",
+    "category": "cleaning",
+    "afterOpenDays": 365,
+    "fridgeRequired": false,
+    "tips": [
+      "~12 meses (álcool evapora)",
+      "Ficou aguado ou sem cheiro de álcool = descarta",
+      "Menos de 70% não desinfeta"
+    ]
+  },
+  {
+    "id": "desinfetante",
+    "names": ["desinfetante", "pinho", "lysoform"],
+    "label": "Desinfetante",
+    "category": "cleaning",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "1–2 anos",
+      "Cheiro fraco = perdeu eficácia",
+      "Nunca misture com água sanitária"
+    ]
+  },
+  {
+    "id": "multiuso",
+    "names": ["multiuso", "limpador multiuso", "veja multiuso"],
+    "label": "Limpa multiuso",
+    "category": "cleaning",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2 anos em média",
+      "Agite antes de usar",
+      "Não misture com outros produtos"
+    ]
+  },
+  {
+    "id": "sabao-po",
+    "names": ["sabão em pó", "sabao em po", "sabão em pó aberto", "omo"],
+    "label": "Sabão em pó",
+    "category": "cleaning",
+    "afterOpenDays": 1095,
+    "fridgeRequired": false,
+    "tips": [
+      "Estável por anos se bem fechado",
+      "Empedrou? Ainda funciona",
+      "Guarda longe da umidade"
+    ]
+  },
+  {
+    "id": "amaciante",
+    "names": ["amaciante", "amaciante de roupas", "confort"],
+    "label": "Amaciante",
+    "category": "cleaning",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2 anos (separação é normal, agite)",
+      "Cheiro azedo = descarta",
+      "Não exagere: reduz absorção de toalhas"
+    ]
+  },
+  {
+    "id": "limpa-vidros",
+    "names": ["limpa vidros", "limpador de vidros", "vidrex"],
+    "label": "Limpa-vidros",
+    "category": "cleaning",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2+ anos",
+      "Álcool evapora com o tempo",
+      "Usa pano que não solte fiapos"
+    ]
+  },
+  {
+    "id": "saponaceo",
+    "names": ["saponáceo", "saponaceo", "limpa alumínio", "limpa metais"],
+    "label": "Saponáceo",
+    "category": "cleaning",
+    "afterOpenDays": 1095,
+    "fridgeRequired": false,
+    "tips": [
+      "Estável por anos",
+      "Ressecou? Adiciona água",
+      "Testa numa área pequena primeiro"
+    ]
+  },
+  {
+    "id": "inseticida",
+    "names": ["inseticida", "spray inseticida", "raid", "sbp", "mata barata"],
+    "label": "Inseticida spray",
+    "category": "cleaning",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2 anos em média",
+      "Pressão fraca = acabou ou entupiu",
+      "Não aplique perto de comida"
     ]
   },
   {
     "id": "colirio",
-    "names": ["colírio", "colirio", "eye drops"],
+    "names": ["colírio", "colirio", "eye drops", "lágrima artificial", "lacrima"],
     "label": "Colírio",
     "category": "medicine",
     "afterOpenDays": 28,
@@ -132,29 +767,73 @@
     "disclaimer": "Não substitui orientação médica ou o rótulo do produto."
   },
   {
-    "id": "pao-de-forma",
-    "names": ["pão de forma", "pao de forma", "pão", "pao"],
-    "label": "Pão de forma",
-    "category": "food",
-    "afterOpenDays": 5,
+    "id": "xarope",
+    "names": ["xarope", "xarope para tosse", "xarope aberto"],
+    "label": "Xarope",
+    "category": "medicine",
+    "afterOpenDays": 180,
     "fridgeRequired": false,
     "tips": [
-      "5–7 dias em local seco; congelar estende",
-      "Mofo em uma fatia = descarte o pacote",
-      "Geladeira resseca — melhor congelar"
-    ]
+      "Verifique o rótulo (varia muito)",
+      "Turvo ou cheiro alterado = descarta",
+      "Não use após a data de validade"
+    ],
+    "disclaimer": "Não substitui orientação médica. Consulte seu médico."
   },
   {
-    "id": "ovos",
-    "names": ["ovo", "ovos", "eggs"],
-    "label": "Ovos",
-    "category": "food",
-    "afterOpenDays": 28,
-    "fridgeRequired": true,
+    "id": "pomada",
+    "names": ["pomada", "pomada dermatológica", "nebacetin", "hipoglós"],
+    "label": "Pomada",
+    "category": "medicine",
+    "afterOpenDays": 180,
+    "fridgeRequired": false,
     "tips": [
-      "Na geladeira, várias semanas se intactos",
-      "Não lave a casca antes de guardar",
-      "Teste na água: flutua = desconfie"
-    ]
+      "3–6 meses após abrir",
+      "Separada ou cheiro alterado = descarta",
+      "Não compartilhe com outras pessoas"
+    ],
+    "disclaimer": "Não substitui orientação médica."
+  },
+  {
+    "id": "analgesico",
+    "names": ["analgésico", "comprimido", "dipirona", "paracetamol", "ibuprofeno"],
+    "label": "Analgésico (comprimido)",
+    "category": "medicine",
+    "afterOpenDays": 1095,
+    "fridgeRequired": false,
+    "tips": [
+      "Vale até a validade (se bem armazenado)",
+      "Umidade estraga: guarde em local seco",
+      "Cor ou cheiro diferente = descarta"
+    ],
+    "disclaimer": "Não substitui orientação médica. Respeite a dose e a validade."
+  },
+  {
+    "id": "soro-fisiologico",
+    "names": ["soro fisiológico", "soro", "soro aberto"],
+    "label": "Soro fisiológico",
+    "category": "medicine",
+    "afterOpenDays": 30,
+    "fridgeRequired": false,
+    "tips": [
+      "30 dias após abrir (contaminação bacteriana)",
+      "Turvo = descarta imediatamente",
+      "Não compartilhe o frasco"
+    ],
+    "disclaimer": "Produto estéril. Após aberto, risco de contaminação."
+  },
+  {
+    "id": "repelente",
+    "names": ["repelente", "repelente de insetos", "autan", "exposis", "off"],
+    "label": "Repelente",
+    "category": "medicine",
+    "afterOpenDays": 730,
+    "fridgeRequired": false,
+    "tips": [
+      "2–3 anos (ativo degrada)",
+      "Agite antes de usar",
+      "Não use vencido (não protege)"
+    ],
+    "disclaimer": "Verifique o princípio ativo e a validade."
   }
 ]
