@@ -252,7 +252,7 @@ export function Scanner({ onProduct, onBack }: Props) {
         )}
 
         {showCam && (
-          <div className="flex w-full flex-col items-center gap-3">
+          <div className="flex w-full flex-colp-3">
             <div className="relative w-full border border-border bg-black" style={{ minHeight: 300 }}>
               {/* hidden container for html5-qrcode decoder */}
               <div id="scan-frame" className="hidden" />
